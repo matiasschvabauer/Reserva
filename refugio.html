@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Refugio - Reserva Canina Gálvez</title>
+    <meta name="description" content="Insumos necesarios, lista de prioridades del refugio, voluntariado y la vida cotidiana.">
+    <link rel="icon" href="assets/img/cropped_circle_image.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <div class="top-bar-info">
+                <span><i class="fas fa-location-dot"></i> Gálvez, Santa Fe, Argentina</span>
+                <span><i class="fas fa-heart"></i> Refugio de Protección y Bienestar Animal</span>
+            </div>
+            <div class="top-bar-actions">
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ReservaCaninaGalvezFanPage/?locale=es_LA" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/reservacaninagalvez/?hl=es" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="main-header">
+        <div class="container header-wrapper">
+            <a href="index.html" class="logo-brand">
+                <img src="assets/img/LogoReserva.png" alt="Reserva Canina Gálvez" class="logo-img-rectangular">
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="quienes-somos.html" class="nav-link">Información</a>
+                <a href="adopciones.html" class="nav-link">Adopciones</a>
+                <a href="refugio.html" class="nav-link active">Refugio</a>
+                <a href="leyes.html" class="nav-link">Leyes</a>
+                <a href="foro.html" class="nav-link">Foro</a>
+                <a href="contacto.html" class="nav-link">Contacto</a>
+            </nav>
+
+            <div class="header-right-actions">
+                <button class="theme-toggle-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+                <a href="donaciones.html" class="btn btn-secondary btn-sm"><i class="fas fa-hand-holding-heart"></i> Donar</a>
+                <button class="mobile-menu-btn" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE NAVIGATION -->
+    <div class="mobile-nav" id="mobile-nav">
+        <div class="mobile-nav-links">
+            <a href="index.html" class="nav-link">Inicio</a>
+            <a href="quienes-somos.html" class="nav-link">Información</a>
+            <a href="adopciones.html" class="nav-link">Adopciones</a>
+            <a href="refugio.html" class="nav-link active">Refugio</a>
+            <a href="leyes.html" class="nav-link">Leyes</a>
+            <a href="foro.html" class="nav-link">Foro</a>
+            <a href="contacto.html" class="nav-link">Contacto</a>
+        </div>
+    </div>
+
+    <!-- PAGE HERO -->
+    <section style="background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color:#fff; padding: 60px 0; text-align: center;">
+        <div class="container">
+            <span class="badge badge-secondary" style="margin-bottom: 12px;">Día a Día en la Reserva</span>
+            <h1 style="color:#fff; font-size: 2.5rem; margin-bottom: 10px;">Cosas del Refugio y Necesidades</h1>
+            <p style="opacity: 0.9; max-width: 600px; margin: 0 auto;">Insumos requeridos, voluntariado y la vida cotidiana de nuestros perritos rescatados en Gálvez.</p>
+        </div>
+    </section>
+
+    <!-- URGENT NEEDS -->
+    <section class="section-padding">
+        <div class="container">
+            <h2 class="section-title">Insumos y Necesidades Prioritarias</h2>
+            <p class="section-subtitle">Si querés colaborar con productos físicos, podés acercar cualquiera de los siguientes elementos al refugio o puntos de acopio en la ciudad.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px;">
+                <div style="background: var(--bg-card); padding: 25px; border-radius: var(--radius-md); border-top: 4px solid #e53935; box-shadow: var(--shadow-sm);">
+                    <span class="badge badge-urgent" style="margin-bottom: 12px;">Urgencia Máxima</span>
+                    <h3 style="margin-bottom: 10px;">Alimentación</h3>
+                    <ul style="color: var(--text-muted); font-size: 0.95rem; display: flex; flex-direction: column; gap: 8px;">
+                        <li><i class="fas fa-check" style="color: var(--primary);"></i> Alimento balanceado para adultos (bolsas de 15kg o 20kg)</li>
+                        <li><i class="fas fa-check" style="color: var(--primary);"></i> Alimento especial para cachorros</li>
+                        <li><i class="fas fa-check" style="color: var(--primary);"></i> Arroz parboil y alimento húmedo en lata (para convalecientes)</li>
+                    </ul>
+                </div>
+
+                <div style="background: var(--bg-card); padding: 25px; border-radius: var(--radius-md); border-top: 4px solid var(--secondary); box-shadow: var(--shadow-sm);">
+                    <span class="badge badge-secondary" style="margin-bottom: 12px;">Salud y Curaciones</span>
+                    <h3 style="margin-bottom: 10px;">Farmacia Veterinaria</h3>
+                    <ul style="color: var(--text-muted); font-size: 0.95rem; display: flex; flex-direction: column; gap: 8px;">
+                        <li><i class="fas fa-check" style="color: var(--primary);"></i> Pipetas antipulgas y garrapatas (todos los tamaños)</li>
+                        <li><i class="fas fa-check" style="color: var(--primary);"></i> Desparasitantes internos (comprimidos)</li>
+                        <li><i class="fas fa-check" style="color: var(--primary);"></i> Gasas, agua oxigenada, Pervinox y aerosol curabicheras</li>
+                    </ul>
+                </div>
+
+                <div style="background: var(--bg-card); padding: 25px; border-radius: var(--radius-md); border-top: 4px solid var(--primary); box-shadow: var(--shadow-sm);">
+                    <span class="badge badge-primary" style="margin-bottom: 12px;">Infraestructura</span>
+                    <h3 style="margin-bottom: 10px;">Mantenimiento e Higiene</h3>
+                    <ul style="color: var(--text-muted); font-size: 0.95rem; display: flex; flex-direction: column; gap: 8px;">
+                        <li><i class="fas fa-check" style="color: var(--primary);"></i> Lavandina, detergente y desinfectantes concentrados</li>
+                        <li><i class="fas fa-check" style="color: var(--primary);"></i> Mantas, frazadas en buen estado y trapos de piso</li>
+                        <li><i class="fas fa-check" style="color: var(--primary);"></i> Collares, correas y comederos de acero inoxidable</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VOLUNTEERING & TRANSIT -->
+    <section class="section-padding bg-alt">
+        <div class="container">
+            <div class="responsive-2col">
+                <div>
+                    <span class="badge badge-primary" style="margin-bottom: 12px;">Formá Parte del Equipo</span>
+                    <h2 style="font-size: 2rem; margin-bottom: 15px;">Sé Voluntario o Hogar de Tránsito</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 15px;">
+                        **Voluntariado:** Podés colaborar en las jornadas de fin de semana bañando, paseando o cepillando a los rescatados, organizando eventos de recaudación o difundiendo en redes sociales.
+                    </p>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">
+                        **Hogar de Tránsito:** Recibir de forma temporal a un cachorro, un perrito operado o un ancianito mientras encuentra su hogar definitivo marca la diferencia entre la vida y la muerte.
+                    </p>
+                    <a href="https://wa.me/5493404000000?text=Hola!%20Quiero%20ser%20voluntario/hogar%20de%20tr%C3%A1nsito" target="_blank" class="btn btn-primary">
+                        <i class="fab fa-whatsapp"></i> Postularme por WhatsApp
+                    </a>
+                </div>
+                <div>
+                    <div class="refugio-carousel-box" style="position: relative; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); height: 380px;">
+                        <div id="refugio-carousel-slides" style="width: 100%; height: 100%; position: relative;">
+                            <img src="assets/img/Animales de la reserva real/NoNameFound1.jpg" alt="Rescatados Reserva Gálvez 1" class="refugio-slide active" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; opacity: 1; transition: opacity 0.8s ease;">
+                            <img src="assets/img/Animales de la reserva real/NoNameFound2.jpg" alt="Rescatados Reserva Gálvez 2" class="refugio-slide" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; opacity: 0; transition: opacity 0.8s ease;">
+                            <img src="assets/img/Animales de la reserva real/NoNameFound3.jpg" alt="Rescatados Reserva Gálvez 3" class="refugio-slide" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; opacity: 0; transition: opacity 0.8s ease;">
+                            <img src="assets/img/Animales de la reserva real/NoNameFound4.jpg" alt="Rescatados Reserva Gálvez 4" class="refugio-slide" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; opacity: 0; transition: opacity 0.8s ease;">
+                            <img src="assets/img/Animales de la reserva real/NoNameFound5.jpg" alt="Rescatados Reserva Gálvez 5" class="refugio-slide" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; opacity: 0; transition: opacity 0.8s ease;">
+                            <img src="assets/img/Animales de la reserva real/NoNameFound6.jpg" alt="Rescatados Reserva Gálvez 6" class="refugio-slide" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; opacity: 0; transition: opacity 0.8s ease;">
+                            <img src="assets/img/Animales de la reserva real/NoNameFound7.jpg" alt="Rescatados Reserva Gálvez 7" class="refugio-slide" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; opacity: 0; transition: opacity 0.8s ease;">
+                        </div>
+                        <div style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 10;" id="refugio-carousel-dots">
+                        </div>
+                        <button onclick="prevRefugioSlide()" aria-label="Anterior" style="position: absolute; top: 50%; left: 15px; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; z-index: 10;"><i class="fas fa-chevron-left"></i></button>
+                        <button onclick="nextRefugioSlide()" aria-label="Siguiente" style="position: absolute; top: 50%; right: 15px; transform: translateY(-50%); background: rgba(0,0,0,0.5); color: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; z-index: 10;"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo-brand" style="margin-bottom: 15px;">
+                        <img src="assets/img/cropped_circle_image.png" alt="Logo Reserva Canina Gálvez" class="logo-img-circle">
+                        <div class="logo-title">
+                            <span class="logo-main-text" style="color: #fff;">RESERVA CANINA</span>
+                            <span class="logo-sub-text" style="color: #9eb1a3;">GÁLVEZ • SANTA FE</span>
+                        </div>
+                    </div>
+                    <p>Asociación sin fines de lucro dedicada a la protección, rescate y adopción de animales vulnerables en la ciudad de Gálvez, Santa Fe.</p>
+                </div>
+                <div>
+                    <h4 class="footer-title">Navegación</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="quienes-somos.html">Información</a></li>
+                        <li><a href="adopciones.html">Adopciones</a></li>
+                        <li><a href="refugio.html">Refugio</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Comunidad</h4>
+                    <ul class="footer-links">
+                        <li><a href="leyes.html">Leyes</a></li>
+                        <li><a href="foro.html">Foro</a></li>
+                        <li><a href="donaciones.html">Donaciones</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Redes Sociales</h4>
+                    <p style="color: #9eb1a3; font-size: 0.9rem; margin-bottom: 15px;">Seguinos para ver los rescates diarios:</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/ReservaCaninaGalvezFanPage/?locale=es_LA" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/reservacaninagalvez/?hl=es" target="_blank"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Reserva Canina Gálvez. Desarrollado por <a href="https://matiasschvabauer.site/" target="_blank">Schvabauer Matias</a>.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

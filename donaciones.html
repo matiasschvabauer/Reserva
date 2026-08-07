@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donaciones - Reserva Canina Gálvez</title>
+    <meta name="description" content="Colaborá con la Reserva Canina de Gálvez mediante transferencia bancaria, Mercado Pago o insumos.">
+    <link rel="icon" href="assets/img/cropped_circle_image.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <div class="top-bar-info">
+                <span><i class="fas fa-location-dot"></i> Gálvez, Santa Fe, Argentina</span>
+                <span><i class="fas fa-heart"></i> Tu Donación Salva Vidas</span>
+            </div>
+            <div class="top-bar-actions">
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ReservaCaninaGalvezFanPage/?locale=es_LA" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/reservacaninagalvez/?hl=es" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="main-header">
+        <div class="container header-wrapper">
+            <a href="index.html" class="logo-brand">
+                <img src="assets/img/LogoReserva.png" alt="Reserva Canina Gálvez" class="logo-img-rectangular">
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="quienes-somos.html" class="nav-link">Información</a>
+                <a href="adopciones.html" class="nav-link">Adopciones</a>
+                <a href="refugio.html" class="nav-link">Refugio</a>
+                <a href="leyes.html" class="nav-link">Leyes</a>
+                <a href="foro.html" class="nav-link">Foro</a>
+                <a href="contacto.html" class="nav-link">Contacto</a>
+            </nav>
+
+            <div class="header-right-actions">
+                <button class="theme-toggle-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+                <a href="donaciones.html" class="btn btn-secondary btn-sm"><i class="fas fa-hand-holding-heart"></i> Donar</a>
+                <button class="mobile-menu-btn" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE NAVIGATION -->
+    <div class="mobile-nav" id="mobile-nav">
+        <div class="mobile-nav-links">
+            <a href="index.html" class="nav-link">Inicio</a>
+            <a href="quienes-somos.html" class="nav-link">Información</a>
+            <a href="adopciones.html" class="nav-link">Adopciones</a>
+            <a href="refugio.html" class="nav-link">Refugio</a>
+            <a href="leyes.html" class="nav-link">Leyes</a>
+            <a href="foro.html" class="nav-link">Foro</a>
+            <a href="contacto.html" class="nav-link">Contacto</a>
+        </div>
+    </div>
+
+    <!-- PAGE HERO -->
+    <section style="background: linear-gradient(135deg, var(--secondary), var(--secondary-hover)); color:#fff; padding: 60px 0; text-align: center;">
+        <div class="container">
+            <span class="badge badge-primary" style="background:#fff; color:var(--secondary); margin-bottom: 12px;">Transparencia y Compromiso</span>
+            <h1 style="color:#fff; font-size: 2.5rem; margin-bottom: 10px;">Centro de Donaciones</h1>
+            <p style="opacity: 0.95; max-width: 600px; margin: 0 auto;">Cada peso se transforma en alimento balanceado, vacunas y atención veterinaria para los rescatados de Gálvez.</p>
+        </div>
+    </section>
+
+    <!-- DONATIONS CONTENT -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="donation-grid">
+                
+                <!-- Transfer Bank Info -->
+                <div class="donation-card">
+                    <span class="badge badge-primary" style="margin-bottom: 15px;"><i class="fas fa-building-columns"></i> Transferencia Bancaria Directa</span>
+                    <h3 style="font-size: 1.4rem; margin-bottom: 15px;">Datos de la Cuenta Oficial</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">Podés realizar una transferencia o depósito desde cualquier homebanking o billetera virtual.</p>
+
+                    <div style="margin-bottom: 15px;">
+                        <label style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">ALIAS:</label>
+                        <div class="copy-box">
+                            <span class="copy-text">RESERVA.CANINA.GALVEZ</span>
+                            <button class="btn btn-outline btn-sm" onclick="copyAlias()"><i class="fas fa-copy"></i> Copiar</button>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">CBU / CVU:</label>
+                        <div class="copy-box">
+                            <span class="copy-text" style="font-size: 0.9rem;">0000003100098765432100</span>
+                            <button class="btn btn-outline btn-sm" onclick="copyCBU()"><i class="fas fa-copy"></i> Copiar</button>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 0.85rem; color: var(--text-light);"><strong>Titular:</strong> Reserva Canina Gálvez (Asociación Civil)</p>
+                </div>
+
+                <!-- Mercado Pago Buttons -->
+                <div class="donation-card">
+                    <span class="badge badge-secondary" style="margin-bottom: 15px;"><i class="fas fa-bolt"></i> Mercado Pago</span>
+                    <h3 style="font-size: 1.4rem; margin-bottom: 15px;">Donación Rápida con 1 Clic</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.95rem;">Elegí el monto con el que deseás colaborar hoy:</p>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px;">
+                        <button class="btn btn-outline" onclick="donateMercadoPago(1000)">$1.000</button>
+                        <button class="btn btn-outline" onclick="donateMercadoPago(3000)">$3.000</button>
+                        <button class="btn btn-outline" onclick="donateMercadoPago(5000)">$5.000</button>
+                        <button class="btn btn-secondary" onclick="donateMercadoPago(10000)">$10.000</button>
+                    </div>
+
+                    <!-- Impact Calculator -->
+                    <div style="background: var(--bg-body); padding: 18px; border-radius: var(--radius-sm); border: 1px solid var(--border-color);">
+                        <label class="form-label" style="margin-bottom: 8px;">Calculá el impacto de tu aporte libre ($):</label>
+                        <input type="number" id="custom-donation-amount" class="form-control" placeholder="Ej: 4000" style="margin-bottom: 10px;">
+                        <div id="donation-impact-text" style="font-weight: 600; color: var(--primary); font-size: 0.9rem; min-height: 24px;">
+                            🌱 ¡Ingresá un monto para ver a qué equivale!
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo-brand" style="margin-bottom: 15px;">
+                        <img src="assets/img/cropped_circle_image.png" alt="Logo Reserva Canina Gálvez" class="logo-img-circle">
+                        <div class="logo-title">
+                            <span class="logo-main-text" style="color: #fff;">RESERVA CANINA</span>
+                            <span class="logo-sub-text" style="color: #9eb1a3;">GÁLVEZ • SANTA FE</span>
+                        </div>
+                    </div>
+                    <p>Asociación sin fines de lucro dedicada a la protección, rescate y adopción de animales vulnerables en la ciudad de Gálvez, Santa Fe.</p>
+                </div>
+                <div>
+                    <h4 class="footer-title">Navegación</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="quienes-somos.html">Información</a></li>
+                        <li><a href="adopciones.html">Adopciones</a></li>
+                        <li><a href="refugio.html">Refugio</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Comunidad</h4>
+                    <ul class="footer-links">
+                        <li><a href="leyes.html">Leyes</a></li>
+                        <li><a href="foro.html">Foro</a></li>
+                        <li><a href="donaciones.html">Donaciones</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Redes Sociales</h4>
+                    <p style="color: #9eb1a3; font-size: 0.9rem; margin-bottom: 15px;">Seguinos para ver los rescates diarios:</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/ReservaCaninaGalvezFanPage/?locale=es_LA" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/reservacaninagalvez/?hl=es" target="_blank"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Reserva Canina Gálvez. Desarrollado por <a href="https://matiasschvabauer.site/" target="_blank">Schvabauer Matias</a>.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/donaciones.js"></script>
+</body>
+</html>

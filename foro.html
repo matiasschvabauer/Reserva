@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foro - Reserva Canina Gálvez</title>
+    <meta name="description" content="Espacio de encuentro vecinal en Gálvez para publicar mascotas perdidas, consultas veterinarias y pedidos de ayuda.">
+    <link rel="icon" href="assets/img/cropped_circle_image.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Firebase SDK (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <div class="top-bar-info">
+                <span><i class="fas fa-location-dot"></i> Gálvez, Santa Fe, Argentina</span>
+                <span><i class="fas fa-comments"></i> Comunidad Vecinal & Ayuda Animal</span>
+            </div>
+            <div class="top-bar-actions">
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ReservaCaninaGalvezFanPage/?locale=es_LA" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/reservacaninagalvez/?hl=es" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="main-header">
+        <div class="container header-wrapper">
+            <a href="index.html" class="logo-brand">
+                <img src="assets/img/LogoReserva.png" alt="Reserva Canina Gálvez" class="logo-img-rectangular">
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="quienes-somos.html" class="nav-link">Información</a>
+                <a href="adopciones.html" class="nav-link">Adopciones</a>
+                <a href="refugio.html" class="nav-link">Refugio</a>
+                <a href="leyes.html" class="nav-link">Leyes</a>
+                <a href="foro.html" class="nav-link active">Foro</a>
+                <a href="contacto.html" class="nav-link">Contacto</a>
+            </nav>
+
+            <div class="header-right-actions">
+                <button class="theme-toggle-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+                <div class="auth-status-container"></div>
+                <button class="mobile-menu-btn" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE NAVIGATION -->
+    <div class="mobile-nav" id="mobile-nav">
+        <div class="mobile-nav-links">
+            <a href="index.html" class="nav-link">Inicio</a>
+            <a href="quienes-somos.html" class="nav-link">Información</a>
+            <a href="adopciones.html" class="nav-link">Adopciones</a>
+            <a href="refugio.html" class="nav-link">Refugio</a>
+            <a href="leyes.html" class="nav-link">Leyes</a>
+            <a href="foro.html" class="nav-link active">Foro</a>
+            <a href="contacto.html" class="nav-link">Contacto</a>
+        </div>
+    </div>
+
+    <!-- PAGE HERO -->
+    <section style="background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color:#fff; padding: 50px 0; text-align: center;">
+        <div class="container">
+            <span class="badge badge-secondary" style="margin-bottom: 12px;">Comunidad Gálvez</span>
+            <h1 style="color:#fff; font-size: 2.3rem; margin-bottom: 8px;">Foro Abierto de Ayuda y Búsqueda</h1>
+            <p style="opacity: 0.9; max-width: 600px; margin: 0 auto;">Espacio para buscar mascotas perdidas, pedir hogares de tránsito y consultar dudas médicas.</p>
+        </div>
+    </section>
+
+    <!-- FORUM SECTION -->
+    <section class="section-padding">
+        <div class="container">
+            
+            <!-- Header Actions Box -->
+            <div class="forum-header-box">
+                <div>
+                    <h2>Hilos de Discusión Recientes</h2>
+                    <p style="color: var(--text-muted);">Iniciá sesión con tu cuenta de Google, Facebook o en modo demo para participar.</p>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('new-thread-modal')">
+                    <i class="fas fa-plus"></i> Crear Nuevo Hilo
+                </button>
+            </div>
+
+            <!-- Categories Bar -->
+            <div class="forum-categories">
+                <button class="cat-btn active" data-cat="all">Todas las Categorías</button>
+                <button class="cat-btn" data-cat="perdidos">🚨 Mascotas Perdidas</button>
+                <button class="cat-btn" data-cat="salud">🩺 Consultas Médicas</button>
+                <button class="cat-btn" data-cat="ayuda">🆘 Pedidos de Ayuda</button>
+                <button class="cat-btn" data-cat="general">💬 General</button>
+            </div>
+
+            <!-- Thread List -->
+            <div class="thread-list" id="forum-threads-list">
+                <!-- Rendered dynamically by js/foro.js -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- MODAL: LOGIN / AUTH -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal-container">
+            <button class="modal-close-btn" onclick="closeModal('login-modal')"><i class="fas fa-times"></i></button>
+            <div style="text-align: center; margin-bottom: 25px;">
+                <img src="assets/img/cropped_circle_image.png" alt="Logo Reserva Canina" class="logo-img-circle" style="width:70px; height:70px; margin: 0 auto 15px auto;">
+                <h2>Iniciar Sesión en la Reserva</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Elige una opción para ingresar y publicar en el foro de Gálvez.</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 25px;">
+                <button class="btn" onclick="loginWithGoogle()" style="background: #ffffff; color: #444; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
+                    <i class="fab fa-google" style="color: #ea4335;"></i> Continuar con Google
+                </button>
+                <button class="btn" onclick="loginWithFacebook()" style="background: #1877f2; color: #ffffff;">
+                    <i class="fab fa-facebook-f"></i> Continuar con Facebook
+                </button>
+            </div>
+
+            <div style="text-align: center; position: relative; margin-bottom: 20px;">
+                <hr style="border-top: 1px solid var(--border-color);">
+                <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--bg-card); padding: 0 10px; color: var(--text-light); font-size: 0.8rem;">O EN MODO INVITADO / DEMO</span>
+            </div>
+
+            <form onsubmit="loginAsGuest(event)">
+                <div class="form-group">
+                    <label class="form-label">Tu Nombre o Apodo:</label>
+                    <input type="text" id="guest-name" class="form-control" placeholder="Ej: Vecino de Gálvez" required>
+                </div>
+                <button type="submit" class="btn btn-outline" style="width: 100%;">
+                    Ingresar como Invitado
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: NEW THREAD -->
+    <div class="modal-overlay" id="new-thread-modal">
+        <div class="modal-container">
+            <button class="modal-close-btn" onclick="closeModal('new-thread-modal')"><i class="fas fa-times"></i></button>
+            <h2>Crear Nuevo Hilo en el Foro</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">Publicá tu consulta o caso para que la comunidad pueda ayudarte.</p>
+
+            <form onsubmit="createNewThread(event)">
+                <div class="form-group">
+                    <label class="form-label">Título de la publicación:</label>
+                    <input type="text" id="thread-title-input" class="form-control" placeholder="Ej: Perro perdido en Barrio San Jerónimo..." required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Categoría:</label>
+                    <select id="thread-category-select" class="form-control">
+                        <option value="perdidos">🚨 Mascotas Perdidas y Encontradas</option>
+                        <option value="salud">🩺 Consultas Médicas / Veterinarias</option>
+                        <option value="ayuda">🆘 Pedidos de Ayuda y Tránsito</option>
+                        <option value="general">💬 General y Charlas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descripción detallada:</label>
+                    <textarea id="thread-content-input" class="form-control" placeholder="Agregá zona de Gálvez, teléfono de contacto y detalles importantes..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-paper-plane"></i> Publicar Hilo
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: REPLY -->
+    <div class="modal-overlay" id="reply-modal">
+        <div class="modal-container">
+            <button class="modal-close-btn" onclick="closeModal('reply-modal')"><i class="fas fa-times"></i></button>
+            <h3>Responder Publicación</h3>
+            <p id="reply-thread-title-preview" style="color: var(--primary); font-weight: 600; margin-bottom: 15px; font-size: 0.9rem;"></p>
+
+            <form onsubmit="submitReply(event)">
+                <input type="hidden" id="reply-thread-id">
+                <div class="form-group">
+                    <textarea id="reply-content-input" class="form-control" placeholder="Escribí tu respuesta o información útil..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    Enviar Respuesta
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo-brand" style="margin-bottom: 15px;">
+                        <img src="assets/img/cropped_circle_image.png" alt="Logo Reserva Canina Gálvez" class="logo-img-circle">
+                        <div class="logo-title">
+                            <span class="logo-main-text" style="color: #fff;">RESERVA CANINA</span>
+                            <span class="logo-sub-text" style="color: #9eb1a3;">GÁLVEZ • SANTA FE</span>
+                        </div>
+                    </div>
+                    <p>Asociación sin fines de lucro dedicada a la protección, rescate y adopción de animales vulnerables en la ciudad de Gálvez, Santa Fe.</p>
+                </div>
+                <div>
+                    <h4 class="footer-title">Navegación</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="quienes-somos.html">Información</a></li>
+                        <li><a href="adopciones.html">Adopciones</a></li>
+                        <li><a href="refugio.html">Refugio</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Comunidad</h4>
+                    <ul class="footer-links">
+                        <li><a href="leyes.html">Leyes</a></li>
+                        <li><a href="foro.html">Foro</a></li>
+                        <li><a href="donaciones.html">Donaciones</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Redes Sociales</h4>
+                    <p style="color: #9eb1a3; font-size: 0.9rem; margin-bottom: 15px;">Seguinos para ver los rescates diarios:</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/ReservaCaninaGalvezFanPage/?locale=es_LA" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/reservacaninagalvez/?hl=es" target="_blank"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Reserva Canina Gálvez. Desarrollado por <a href="https://matiasschvabauer.site/" target="_blank">Schvabauer Matias</a>.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/foro.js"></script>
+</body>
+</html>

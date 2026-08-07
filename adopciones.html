@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adopciones - Reserva Canina Gálvez</title>
+    <meta name="description" content="Conocé a nuestros compañeros de vida listos para ser adoptados de forma responsable en Gálvez.">
+    <link rel="icon" href="assets/img/cropped_circle_image.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="container top-bar-content">
+            <div class="top-bar-info">
+                <span><i class="fas fa-location-dot"></i> Gálvez, Santa Fe, Argentina</span>
+                <span><i class="fas fa-heart"></i> Refugio de Protección y Bienestar Animal</span>
+            </div>
+            <div class="top-bar-actions">
+                <div class="social-links">
+                    <a href="https://www.facebook.com/ReservaCaninaGalvezFanPage/?locale=es_LA" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/reservacaninagalvez/?hl=es" target="_blank"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="main-header">
+        <div class="container header-wrapper">
+            <a href="index.html" class="logo-brand">
+                <img src="assets/img/LogoReserva.png" alt="Reserva Canina Gálvez" class="logo-img-rectangular">
+            </a>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nav-link">Inicio</a>
+                <a href="quienes-somos.html" class="nav-link">Información</a>
+                <a href="adopciones.html" class="nav-link active">Adopciones</a>
+                <a href="refugio.html" class="nav-link">Refugio</a>
+                <a href="leyes.html" class="nav-link">Leyes</a>
+                <a href="foro.html" class="nav-link">Foro</a>
+                <a href="contacto.html" class="nav-link">Contacto</a>
+            </nav>
+
+            <div class="header-right-actions">
+                <button class="theme-toggle-btn" id="theme-toggle"><i class="fas fa-moon"></i></button>
+                <a href="donaciones.html" class="btn btn-secondary btn-sm"><i class="fas fa-hand-holding-heart"></i> Donar</a>
+                <button class="mobile-menu-btn" id="mobile-menu-toggle"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE NAVIGATION -->
+    <div class="mobile-nav" id="mobile-nav">
+        <div class="mobile-nav-links">
+            <a href="index.html" class="nav-link">Inicio</a>
+            <a href="quienes-somos.html" class="nav-link">Información</a>
+            <a href="adopciones.html" class="nav-link active">Adopciones</a>
+            <a href="refugio.html" class="nav-link">Refugio</a>
+            <a href="leyes.html" class="nav-link">Leyes</a>
+            <a href="foro.html" class="nav-link">Foro</a>
+            <a href="contacto.html" class="nav-link">Contacto</a>
+        </div>
+    </div>
+
+    <!-- PAGE HERO -->
+    <section style="background: linear-gradient(135deg, var(--primary), var(--primary-hover)); color:#fff; padding: 60px 0; text-align: center;">
+        <div class="container">
+            <span class="badge badge-secondary" style="margin-bottom: 12px;">Adopción Responsable</span>
+            <h1 style="color:#fff; font-size: 2.5rem; margin-bottom: 10px;">Nuestros compañeros de vida en adopción</h1>
+            <p style="opacity: 0.9; max-width: 600px; margin: 0 auto;">Todos entregan amor incondicional. Filtrá para encontrar al integrante ideal para tu hogar.</p>
+        </div>
+    </section>
+
+    <!-- FILTERS BAR & CATALOG -->
+    <section class="section-padding">
+        <div class="container">
+            
+            <!-- Filters Bar -->
+            <div style="background: var(--bg-card); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: center;">
+                <div>
+                    <label class="form-label" style="margin-bottom: 5px;"><i class="fas fa-ruler"></i> Tamaño:</label>
+                    <select class="form-control" id="filter-size">
+                        <option value="all">Todos los tamaños</option>
+                        <option value="pequeño">Pequeño</option>
+                        <option value="mediano">Mediano</option>
+                        <option value="grande">Grande</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label" style="margin-bottom: 5px;"><i class="fas fa-birthday-cake"></i> Edad:</label>
+                    <select class="form-control" id="filter-age">
+                        <option value="all">Todas las edades</option>
+                        <option value="cachorro">Cachorro</option>
+                        <option value="adulto">Adulto</option>
+                        <option value="senior">Senior (Viejito)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label" style="margin-bottom: 5px;"><i class="fas fa-venus-mars"></i> Sexo:</label>
+                    <select class="form-control" id="filter-gender">
+                        <option value="all">Todos</option>
+                        <option value="macho">Macho ♂</option>
+                        <option value="hembra">Hembra ♀</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Dog Cards Grid -->
+            <div class="dog-grid" id="dogs-grid">
+                <!-- Rendered dynamically by js/adopciones.js -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- DOG DETAIL MODAL -->
+    <div class="modal-overlay" id="dog-detail-modal">
+        <div class="modal-container">
+            <button class="modal-close-btn" onclick="closeModal('dog-detail-modal')"><i class="fas fa-times"></i></button>
+            <div id="dog-modal-content"></div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="logo-brand" style="margin-bottom: 15px;">
+                        <img src="assets/img/cropped_circle_image.png" alt="Logo Reserva Canina Gálvez" class="logo-img-circle">
+                        <div class="logo-title">
+                            <span class="logo-main-text" style="color: #fff;">RESERVA CANINA</span>
+                            <span class="logo-sub-text" style="color: #9eb1a3;">GÁLVEZ • SANTA FE</span>
+                        </div>
+                    </div>
+                    <p>Asociación sin fines de lucro dedicada a la protección, rescate y adopción de animales vulnerables en la ciudad de Gálvez, Santa Fe.</p>
+                </div>
+                <div>
+                    <h4 class="footer-title">Navegación</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="quienes-somos.html">Información</a></li>
+                        <li><a href="adopciones.html">Adopciones</a></li>
+                        <li><a href="refugio.html">Refugio</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Comunidad</h4>
+                    <ul class="footer-links">
+                        <li><a href="leyes.html">Leyes</a></li>
+                        <li><a href="foro.html">Foro</a></li>
+                        <li><a href="donaciones.html">Donaciones</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Redes Sociales</h4>
+                    <p style="color: #9eb1a3; font-size: 0.9rem; margin-bottom: 15px;">Seguinos para ver los rescates diarios:</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/ReservaCaninaGalvezFanPage/?locale=es_LA" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/reservacaninagalvez/?hl=es" target="_blank"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Reserva Canina Gálvez. Desarrollado por <a href="https://matiasschvabauer.site/" target="_blank">Schvabauer Matias</a>.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/adopciones.js"></script>
+</body>
+</html>
