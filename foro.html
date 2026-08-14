@@ -83,24 +83,87 @@
     <section class="section-padding">
         <div class="container">
             
+            <!-- Statistics Bar -->
+            <div class="forum-stats-grid">
+                <div class="forum-stat-card">
+                    <div class="forum-stat-icon"><i class="fas fa-comments"></i></div>
+                    <div>
+                        <div class="forum-stat-number" id="stat-total-threads">0</div>
+                        <div class="forum-stat-label">Hilos Activos</div>
+                    </div>
+                </div>
+                <div class="forum-stat-card">
+                    <div class="forum-stat-icon" style="background: #e8f5e9; color: #2e7d32;"><i class="fas fa-check-circle"></i></div>
+                    <div>
+                        <div class="forum-stat-number" id="stat-solved-cases">0</div>
+                        <div class="forum-stat-label">Casos Resueltos</div>
+                    </div>
+                </div>
+                <div class="forum-stat-card">
+                    <div class="forum-stat-icon" style="background: #e0f2f1; color: #00695c;"><i class="fas fa-reply-all"></i></div>
+                    <div>
+                        <div class="forum-stat-number" id="stat-total-replies">0</div>
+                        <div class="forum-stat-label">Respuestas</div>
+                    </div>
+                </div>
+                <div class="forum-stat-card">
+                    <div class="forum-stat-icon" style="background: #fff3e0; color: #e65100;"><i class="fas fa-users"></i></div>
+                    <div>
+                        <div class="forum-stat-number" id="stat-active-users">0</div>
+                        <div class="forum-stat-label">Vecinos Activos</div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Header Actions Box -->
             <div class="forum-header-box">
                 <div>
-                    <h2>Hilos de Discusión Recientes</h2>
-                    <p style="color: var(--text-muted);">Iniciá sesión con tu cuenta de Google, Facebook o en modo demo para participar.</p>
+                    <h2>Hilos de Discusión y Búsquedas Activas</h2>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">Comunidad solidaria de Gálvez. Publicá, ayudá y respondé en tiempo real.</p>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('new-thread-modal')">
-                    <i class="fas fa-plus"></i> Crear Nuevo Hilo
+                    <i class="fas fa-plus-circle"></i> Crear Nuevo Hilo
                 </button>
+            </div>
+
+            <!-- Search and Sort Toolbar -->
+            <div class="forum-toolbar">
+                <div class="forum-search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="forum-search-input" placeholder="Buscar por palabra clave, título, barrio de Gálvez o autor..." oninput="handleForumSearch()">
+                </div>
+                <div class="forum-sort-box">
+                    <label for="forum-sort-select" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600;">Ordenar por:</label>
+                    <select id="forum-sort-select" onchange="handleForumSort()">
+                        <option value="recent">⏱️ Más Recientes</option>
+                        <option value="popular">❤️ Más Votados (Me Gusta)</option>
+                        <option value="replies">💬 Más Comentados</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Categories Bar -->
             <div class="forum-categories">
-                <button class="cat-btn active" data-cat="all">Todas las Categorías</button>
-                <button class="cat-btn" data-cat="perdidos">🚨 Mascotas Perdidas</button>
-                <button class="cat-btn" data-cat="salud">🩺 Consultas Médicas</button>
-                <button class="cat-btn" data-cat="ayuda">🆘 Pedidos de Ayuda</button>
-                <button class="cat-btn" data-cat="general">💬 General</button>
+                <button class="cat-btn active" data-cat="all" onclick="filterCategory('all', this)">
+                    <span>Todas las Categorías</span>
+                    <span class="cat-badge-count" id="cat-count-all">0</span>
+                </button>
+                <button class="cat-btn" data-cat="perdidos" onclick="filterCategory('perdidos', this)">
+                    <span>🚨 Mascotas Perdidas</span>
+                    <span class="cat-badge-count" id="cat-count-perdidos">0</span>
+                </button>
+                <button class="cat-btn" data-cat="salud" onclick="filterCategory('salud', this)">
+                    <span>🩺 Consultas Médicas</span>
+                    <span class="cat-badge-count" id="cat-count-salud">0</span>
+                </button>
+                <button class="cat-btn" data-cat="ayuda" onclick="filterCategory('ayuda', this)">
+                    <span>🆘 Pedidos de Ayuda</span>
+                    <span class="cat-badge-count" id="cat-count-ayuda">0</span>
+                </button>
+                <button class="cat-btn" data-cat="general" onclick="filterCategory('general', this)">
+                    <span>💬 General</span>
+                    <span class="cat-badge-count" id="cat-count-general">0</span>
+                </button>
             </div>
 
             <!-- Thread List -->
@@ -118,7 +181,7 @@
             <div style="text-align: center; margin-bottom: 25px;">
                 <img src="assets/img/cropped_circle_image.png" alt="Logo Reserva Canina" class="logo-img-circle" style="width:70px; height:70px; margin: 0 auto 15px auto;">
                 <h2>Iniciar Sesión en la Reserva</h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Elige una opción para ingresar y publicar en el foro de Gálvez.</p>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Elegí una opción para ingresar y participar en el foro de Gálvez.</p>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 25px;">
@@ -149,37 +212,84 @@
 
     <!-- MODAL: NEW THREAD -->
     <div class="modal-overlay" id="new-thread-modal">
-        <div class="modal-container">
+        <div class="modal-container" style="max-width: 620px;">
             <button class="modal-close-btn" onclick="closeModal('new-thread-modal')"><i class="fas fa-times"></i></button>
             <h2>Crear Nuevo Hilo en el Foro</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">Publicá tu consulta o caso para que la comunidad pueda ayudarte.</p>
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">Publicá tu consulta, mascota perdida o pedido de tránsito para la comunidad de Gálvez.</p>
 
             <form onsubmit="createNewThread(event)">
                 <div class="form-group">
-                    <label class="form-label">Título de la publicación:</label>
-                    <input type="text" id="thread-title-input" class="form-control" placeholder="Ej: Perro perdido en Barrio San Jerónimo..." required>
+                    <label class="form-label">Título de la publicación <span style="color:red;">*</span>:</label>
+                    <input type="text" id="thread-title-input" class="form-control" placeholder="Ej: Perra mestiza dorada perdida cerca de Parque San Martín..." required minlength="5" maxlength="120">
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Categoría:</label>
-                    <select id="thread-category-select" class="form-control">
-                        <option value="perdidos">🚨 Mascotas Perdidas y Encontradas</option>
-                        <option value="salud">🩺 Consultas Médicas / Veterinarias</option>
-                        <option value="ayuda">🆘 Pedidos de Ayuda y Tránsito</option>
-                        <option value="general">💬 General y Charlas</option>
-                    </select>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Categoría <span style="color:red;">*</span>:</label>
+                        <select id="thread-category-select" class="form-control">
+                            <option value="perdidos">🚨 Mascotas Perdidas y Encontradas</option>
+                            <option value="salud">🩺 Consultas Médicas / Veterinarias</option>
+                            <option value="ayuda">🆘 Pedidos de Ayuda y Tránsito</option>
+                            <option value="general">💬 General y Charlas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Barrio / Zona de Gálvez:</label>
+                        <input type="text" id="thread-location-input" class="form-control" placeholder="Ej: Barrio Pedroni, Centro...">
+                    </div>
                 </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Teléfono de contacto (Opcional):</label>
+                        <input type="tel" id="thread-phone-input" class="form-control" placeholder="Ej: 3404-556677">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">URL Foto de la Mascota (Opcional):</label>
+                        <input type="url" id="thread-image-input" class="form-control" placeholder="https://ejemplo.com/foto.jpg" oninput="previewImageURL(this.value)">
+                    </div>
+                </div>
+
+                <div id="image-preview-container" style="display: none; margin-bottom: 15px; text-align: center;">
+                    <img id="image-preview-element" src="" alt="Vista Previa" style="max-height: 180px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin: 0 auto;">
+                </div>
+
                 <div class="form-group">
-                    <label class="form-label">Descripción detallada:</label>
-                    <textarea id="thread-content-input" class="form-control" placeholder="Agregá zona de Gálvez, teléfono de contacto y detalles importantes..." required></textarea>
+                    <label class="form-label">Descripción detallada <span style="color:red;">*</span>:</label>
+                    <textarea id="thread-content-input" class="form-control" placeholder="Detallá raza, collar, situación, fecha u observaciones importantes..." required minlength="10" maxlength="2000"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary" style="width: 100%;">
-                    <i class="fas fa-paper-plane"></i> Publicar Hilo
+                    <i class="fas fa-paper-plane"></i> Publicar en el Foro
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- MODAL: REPLY -->
+    <!-- MODAL: DETALLE DE HILO & RESPUESTAS COMPLETAS -->
+    <div class="modal-overlay" id="thread-detail-modal">
+        <div class="modal-container" style="max-width: 720px;">
+            <button class="modal-close-btn" onclick="closeModal('thread-detail-modal')"><i class="fas fa-times"></i></button>
+            
+            <div id="thread-detail-content">
+                <!-- Dynamic Content injected by js/foro.js -->
+            </div>
+
+            <hr style="border-top: 1px solid var(--border-color); margin: 20px 0;">
+
+            <h4 style="margin-bottom: 12px; font-size: 1.05rem;"><i class="fas fa-comment-dots" style="color: var(--primary);"></i> Agregar Respuesta</h4>
+            <form onsubmit="submitReplyFromDetailModal(event)">
+                <input type="hidden" id="detail-modal-thread-id">
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <textarea id="detail-modal-reply-input" class="form-control" placeholder="Escribí tu respuesta o datos para ayudar..." required minlength="2" maxlength="1000" style="min-height: 80px;"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm" style="float: right;">
+                    <i class="fas fa-paper-plane"></i> Publicar Respuesta
+                </button>
+                <div style="clear: both;"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: REPLY (RÁPIDO) -->
     <div class="modal-overlay" id="reply-modal">
         <div class="modal-container">
             <button class="modal-close-btn" onclick="closeModal('reply-modal')"><i class="fas fa-times"></i></button>
