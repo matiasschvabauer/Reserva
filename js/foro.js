@@ -1,6 +1,12 @@
 /* ==========================================================================
-   RESERVA CANINA GÁLVEZ - FORUM LOGIC, REALTIME CONNECTIVITY & SECURITY
+   RESERVA CANINA GÁLVEZ - FORUM LOGIC, CLOUDINARY UPLOAD & MODERATION
    ========================================================================== */
+
+// Cloudinary Free Unsigned Configuration
+const CLOUDINARY_CONFIG = {
+    cloudName: 'doissrwhj', // Tu Cloud Name de Cloudinary
+    uploadPreset: 'reserva_preset'     // Tu Unsigned Upload Preset en Cloudinary
+};
 
 // Anti-XSS Sanitization Function
 function escapeHTML(str) {
@@ -13,73 +19,7 @@ function escapeHTML(str) {
         .replace(/'/g, '&#039;');
 }
 
-// Initial Sample Data for Gálvez Community
-const INITIAL_THREADS = [
-    {
-        id: "thread_1",
-        category: "perdidos",
-        categoryName: "🚨 Mascotas Perdidas",
-        title: "Perra mestiza dorada 'Luna' perdida en Barrio Pedroni",
-        author: "María Fernández",
-        authorRole: "Vecino/a",
-        authorUid: "user_maria_1",
-        location: "Barrio Pedroni (Gálvez)",
-        phone: "3404-556677",
-        imageUrl: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=800&q=80",
-        time: "Hace 2 horas",
-        createdAt: Date.now() - 7200000,
-        content: "Se busca a 'Luna', perrita mestiza de tamaño mediano, pelaje dorado suave. Lleva collar rojo sin chapa. Se escapó cerca del Parque San Martín en Gálvez. Cualquier dato es de vital ayuda.",
-        likes: 18,
-        likedBy: [],
-        isSolved: false,
-        replies: [
-            { id: "r1", author: "Carlos G.", authorRole: "Vecino/a", time: "Hace 1 hora", text: "La vi corriendo por calle San Martín hacia el sur cerca de las 11hs." },
-            { id: "r2", author: "Reserva Canina", authorRole: "Voluntario Reserva", time: "Hace 30 min", text: "Publicado también en las historias de Facebook e Instagram del refugio." }
-        ]
-    },
-    {
-        id: "thread_2",
-        category: "salud",
-        categoryName: "🩺 Consultas Médicas",
-        title: "Esquema básico de desparasitación para cachorros rescatados",
-        author: "Dr. Roberto V.",
-        authorRole: "Veterinario",
-        authorUid: "vet_roberto",
-        location: "Gálvez Centro",
-        phone: "",
-        imageUrl: "",
-        time: "Ayer",
-        createdAt: Date.now() - 86400000,
-        content: "Hola a la comunidad de Gálvez. Dejamos un recordatorio preventivo sobre el esquema de desparasitación interna y externa en cachorritos encontrados en la calle antes de su primera vacuna quíntuple.",
-        likes: 34,
-        likedBy: [],
-        isSolved: false,
-        replies: [
-            { id: "r3", author: "Lucía M.", authorRole: "Vecino/a", time: "Ayer", text: "¡Muchas gracias Doctor por la aclaración y consejos!" }
-        ]
-    },
-    {
-        id: "thread_3",
-        category: "ayuda",
-        categoryName: "🆘 Pedidos de Ayuda",
-        title: "Tránsito urgente por 5 días para 'Felipe' (posoperatorio)",
-        author: "Voluntarios Reserva",
-        authorRole: "Voluntario Reserva",
-        authorUid: "voluntarios_reserva",
-        location: "Refugio Reserva Canina",
-        phone: "3404-401122",
-        imageUrl: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=800&q=80",
-        time: "Hace 1 día",
-        createdAt: Date.now() - 90000000,
-        content: "Rescatamos a 'Felipe' con una lesión en su pata trasera. Requerirá 5 días de reposo posoperatorio en un lugar cerrado sin otros perritos. Brindamos el alimento y sus remedios.",
-        likes: 42,
-        likedBy: [],
-        isSolved: true,
-        replies: [
-            { id: "r4", author: "Ana P.", authorRole: "Vecino/a", time: "Hace 18 horas", text: "Tengo un patio cerrado y habitación libre, ¡ya me contacto por WhatsApp!" }
-        ]
-    }
-];
+const INITIAL_THREADS = [];
 
 let activeCategory = 'all';
 let searchQuery = '';
@@ -94,10 +34,9 @@ function initForum() {
     setupFirebaseOrLocalListeners();
 }
 
-/* Dual Connectivity & Persistence Sync */
+/* Dual Connectivity & Realtime Persistence */
 function setupFirebaseOrLocalListeners() {
     if (typeof firebase !== 'undefined' && isFirebaseConfigured && db) {
-        // Real-time Firestore Listener
         db.collection('forum_threads').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
             const threads = [];
             snapshot.forEach(doc => {
@@ -105,26 +44,18 @@ function setupFirebaseOrLocalListeners() {
             });
             renderForum(threads);
         }, (error) => {
-            console.warn("Error en Firestore listener. Usando LocalStorage fallback.", error);
+            console.warn("Error en Firestore listener. Usando almacenamiento local.", error);
             renderForum(getLocalForumThreads());
         });
     } else {
-        // LocalStorage Fallback Sync
         renderForum(getLocalForumThreads());
     }
 }
 
 function getLocalForumThreads() {
     const saved = localStorage.getItem('reserva_forum_threads');
-    if (!saved) {
-        localStorage.setItem('reserva_forum_threads', JSON.stringify(INITIAL_THREADS));
-        return INITIAL_THREADS;
-    }
-    try {
-        return JSON.parse(saved);
-    } catch(e) {
-        return INITIAL_THREADS;
-    }
+    if (!saved) return INITIAL_THREADS;
+    try { return JSON.parse(saved); } catch (e) { return INITIAL_THREADS; }
 }
 
 function saveLocalForumThreads(threads) {
@@ -134,7 +65,66 @@ function saveLocalForumThreads(threads) {
     }
 }
 
-/* Forum Core Rendering & Stats Calculation */
+/* Direct Cloudinary Free Image Upload Handler */
+function handleCloudinaryFileUpload(fileInput, mode) {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const statusEl = document.getElementById(`cloudinary-status-${mode}`);
+    const hiddenUrlInput = document.getElementById(mode === 'edit' ? 'edit-thread-image-input' : 'thread-image-input');
+    const previewContainer = document.getElementById(mode === 'edit' ? 'edit-image-preview-container' : 'image-preview-container');
+    const previewImg = document.getElementById(mode === 'edit' ? 'edit-image-preview-element' : 'image-preview-element');
+
+    if (statusEl) statusEl.innerText = '⏳ Subiendo foto a Cloudinary...';
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPreset);
+
+    fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CONFIG.cloudName}/image/upload`, {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.secure_url) {
+                hiddenUrlInput.value = data.secure_url;
+                if (previewImg) previewImg.src = data.secure_url;
+                if (previewContainer) previewContainer.style.display = 'block';
+
+                // Check if Cloudinary AI moderation (AWS Rekognition) flagged the image
+                if (data.moderation && data.moderation.length > 0) {
+                    const modStatus = data.moderation[0].status;
+                    if (modStatus === 'pending' || modStatus === 'rejected') {
+                        if (statusEl) statusEl.innerText = '⚠️ Foto subida (En revisión por bot de moderación)';
+                        fileInput.dataset.moderated = 'flagged';
+                        showToast('La imagen fue enviada a revisión previa por el bot de IA.', 'warning');
+                        return;
+                    }
+                }
+
+                fileInput.dataset.moderated = 'approved';
+                if (statusEl) statusEl.innerText = '✅ Foto subida con éxito a Cloudinary';
+                showToast('¡Foto cargada con éxito!', 'success');
+            } else {
+                throw new Error(data.error ? data.error.message : 'Upload failed');
+            }
+        })
+        .catch(err => {
+            console.warn("Cloudinary Upload Fallback using local FileReader:", err);
+            // Fallback local preview if Cloudinary credentials are not configured yet
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                hiddenUrlInput.value = e.target.result;
+                if (previewImg) previewImg.src = e.target.result;
+                if (previewContainer) previewContainer.style.display = 'block';
+                if (statusEl) statusEl.innerText = '✅ Foto seleccionada correctamente';
+            };
+            reader.readAsDataURL(file);
+        });
+}
+
+/* Forum Core Rendering & Stats */
 function renderForum(threads) {
     updateForumStatistics(threads);
     updateCategoryCounts(threads);
@@ -149,13 +139,15 @@ function updateForumStatistics(threads) {
 
     if (!totalThreadsEl) return;
 
-    const totalThreads = threads.length;
-    const solvedCases = threads.filter(t => t.isSolved).length;
-    
+    const publicThreads = threads.filter(t => !t.status || t.status === 'active' || t.isSolved);
+
+    const totalThreads = publicThreads.length;
+    const solvedCases = publicThreads.filter(t => t.isSolved).length;
+
     let totalReplies = 0;
     const authorsSet = new Set();
 
-    threads.forEach(t => {
+    publicThreads.forEach(t => {
         if (t.author) authorsSet.add(t.author);
         if (t.replies) {
             totalReplies += t.replies.length;
@@ -166,12 +158,14 @@ function updateForumStatistics(threads) {
     totalThreadsEl.innerText = totalThreads;
     solvedCasesEl.innerText = solvedCases;
     totalRepliesEl.innerText = totalReplies;
-    activeUsersEl.innerText = Math.max(authorsSet.size, 1);
+    activeUsersEl.innerText = authorsSet.size;
 }
 
 function updateCategoryCounts(threads) {
-    const counts = { all: threads.length, perdidos: 0, salud: 0, ayuda: 0, general: 0 };
-    threads.forEach(t => {
+    const publicThreads = threads.filter(t => !t.status || t.status === 'active' || t.isSolved);
+    const counts = { all: publicThreads.length, perdidos: 0, salud: 0, ayuda: 0, general: 0 };
+
+    publicThreads.forEach(t => {
         if (counts[t.category] !== undefined) {
             counts[t.category]++;
         } else {
@@ -191,15 +185,22 @@ function renderFilteredThreads(threads) {
 
     let filtered = [...threads];
 
-    // 1. Filter by Category
+    // Filter out threads that are "under_review" EXCEPT for the post's author or admins
+    filtered = filtered.filter(t => {
+        if (!t.status || t.status === 'active' || t.isSolved) return true;
+        if (t.status === 'under_review') {
+            return currentUser && (currentUser.isAdmin || currentUser.uid === t.authorUid || currentUser.name === t.author);
+        }
+        return false;
+    });
+
     if (activeCategory !== 'all') {
         filtered = filtered.filter(t => t.category === activeCategory);
     }
 
-    // 2. Filter by Search Query
     if (searchQuery.trim() !== '') {
         const q = searchQuery.toLowerCase().trim();
-        filtered = filtered.filter(t => 
+        filtered = filtered.filter(t =>
             (t.title && t.title.toLowerCase().includes(q)) ||
             (t.content && t.content.toLowerCase().includes(q)) ||
             (t.author && t.author.toLowerCase().includes(q)) ||
@@ -207,30 +208,34 @@ function renderFilteredThreads(threads) {
         );
     }
 
-    // 3. Sorting
     if (currentSort === 'popular') {
         filtered.sort((a, b) => (b.likes || 0) - (a.likes || 0));
     } else if (currentSort === 'replies') {
         filtered.sort((a, b) => ((b.replies ? b.replies.length : 0) - (a.replies ? a.replies.length : 0)));
     } else {
-        // Default recent
         filtered.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
     }
 
     if (filtered.length === 0) {
         threadContainer.innerHTML = `
             <div style="text-align: center; padding: 50px 20px; background: var(--bg-card); border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-                <i class="fas fa-search-minus" style="font-size: 3rem; color: var(--text-light); margin-bottom: 15px;"></i>
-                <h3>No se encontraron publicaciones</h3>
-                <p style="color: var(--text-muted); margin-top: 5px;">Probá cambiando las palabras de búsqueda o publicá un nuevo hilo en esta categoría.</p>
+                <i class="fas fa-comments" style="font-size: 3rem; color: var(--text-light); margin-bottom: 15px;"></i>
+                <h3>No hay publicaciones aún</h3>
+                <p style="color: var(--text-muted); margin-top: 5px;">Sé el primero en iniciar un hilo de búsqueda o consulta para la comunidad de Gálvez.</p>
+                <button class="btn btn-primary" onclick="checkAuthAndOpenNewThread()" style="margin-top: 15px;">
+                    <i class="fas fa-plus-circle"></i> Crear Primer Hilo
+                </button>
             </div>
         `;
         return;
     }
 
     threadContainer.innerHTML = filtered.map(t => {
+        const isAdmin = currentUser && currentUser.isAdmin;
         const isOwner = currentUser && (currentUser.uid === t.authorUid || currentUser.name === t.author);
+        const canManage = isOwner || isAdmin;
         const isLiked = currentUser && t.likedBy && t.likedBy.includes(currentUser.uid);
+        const isUnderReview = t.status === 'under_review';
         
         let categoryClass = 'general';
         if (t.category === 'perdidos') categoryClass = 'lost';
@@ -243,12 +248,32 @@ function renderFilteredThreads(threads) {
             roleBadge = '<span class="author-role-badge role-voluntario"><i class="fas fa-paw"></i> Voluntario</span>';
         } else if (t.authorRole === 'Veterinario') {
             roleBadge = '<span class="author-role-badge role-vet"><i class="fas fa-user-md"></i> Vet</span>';
+        } else if (t.authorRole === 'Administrador Reserva' || (t.authorEmail && isAdminEmail(t.authorEmail))) {
+            roleBadge = '<span class="author-role-badge role-admin"><i class="fas fa-crown"></i> Admin</span>';
         } else if (isOwner) {
             roleBadge = '<span class="author-role-badge role-creator">Tu Hilo</span>';
         }
 
         return `
-            <div class="thread-card ${t.isSolved ? 'is-solved' : ''}">
+            <div class="thread-card ${t.isSolved ? 'is-solved' : ''} ${isUnderReview ? 'is-urgent' : ''}">
+                
+                ${isUnderReview ? `
+                    <div style="background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 14px; font-size: 0.85rem; display: flex; align-items: center; justify-content: space-between; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 1.1rem;"></i>
+                            <div>
+                                <strong>Publicación en Revisión por Moderación Automática:</strong> 
+                                ${isAdmin ? `[MODO ADMIN] Reporte: ${escapeHTML(t.flagReason || 'Contenido o imagen sospechosa')}` : 'Esta publicación está en revisión para verificar las imágenes/texto.'}
+                            </div>
+                        </div>
+                        ${isAdmin ? `
+                            <button class="btn btn-sm btn-primary" onclick="approveThread('${t.id}')" style="padding: 4px 10px; font-size: 0.8rem; background: #2e7d32;">
+                                <i class="fas fa-check"></i> Aprobar Post
+                            </button>
+                        ` : ''}
+                    </div>
+                ` : ''}
+
                 <div class="thread-header-row">
                     <div class="thread-user-info">
                         <div class="avatar">${escapeHTML(t.author ? t.author.charAt(0).toUpperCase() : 'V')}</div>
@@ -262,7 +287,8 @@ function renderFilteredThreads(threads) {
                     </div>
 
                     <div class="thread-status-badges">
-                        ${t.isSolved ? '<span class="status-badge solved"><i class="fas fa-check-circle"></i> ¡ENCONTRADO / RESUELTO!</span>' : ''}
+                        ${isUnderReview ? '<span class="status-badge help"><i class="fas fa-clock"></i> EN REVISIÓN</span>' : ''}
+                        ${t.isSolved ? '<span class="status-badge solved"><i class="fas fa-check-circle"></i> ¡RESUELTO!</span>' : ''}
                         <span class="status-badge ${categoryClass}">${escapeHTML(t.categoryName || t.category)}</span>
                     </div>
                 </div>
@@ -292,17 +318,20 @@ function renderFilteredThreads(threads) {
                         <button class="action-btn" onclick="openThreadDetailModal('${t.id}')" title="Ver comentarios">
                             <i class="fas fa-comment"></i> <span>${t.replies ? t.replies.length : 0} Respuestas</span>
                         </button>
-                        <button class="action-btn" onclick="reportThread('${t.id}')" title="Reportar contenido">
+                        <button class="action-btn" onclick="reportThread('${t.id}')" title="Reportar publicación">
                             <i class="fas fa-flag"></i> <span>Reportar</span>
                         </button>
                     </div>
 
                     <div class="thread-owner-actions">
-                        ${isOwner ? `
-                            <button class="btn btn-sm ${t.isSolved ? 'btn-outline' : 'btn-primary'}" onclick="toggleSolvedStatus('${t.id}')" style="padding: 6px 12px; font-size: 0.8rem;">
-                                ${t.isSolved ? 'Desmarcar Resuelto' : '✅ Marcar Resuelto'}
+                        ${canManage ? `
+                            <button class="btn btn-sm btn-outline" onclick="openEditThreadModal('${t.id}')" style="padding: 6px 10px; font-size: 0.8rem;" title="Editar Publicación">
+                                <i class="fas fa-edit"></i> Editar
                             </button>
-                            <button class="btn btn-sm btn-outline" onclick="deleteThread('${t.id}')" style="padding: 6px 10px; font-size: 0.8rem; color: #c62828; border-color: #ef9a9a;">
+                            <button class="btn btn-sm ${t.isSolved ? 'btn-outline' : 'btn-primary'}" onclick="toggleSolvedStatus('${t.id}')" style="padding: 6px 12px; font-size: 0.8rem;">
+                                ${t.isSolved ? 'Desmarcar' : '✅ Marcar Resuelto'}
+                            </button>
+                            <button class="btn btn-sm btn-outline" onclick="deleteThread('${t.id}')" style="padding: 6px 10px; font-size: 0.8rem; color: #c62828; border-color: #ef9a9a;" title="Eliminar Hilo">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
                         ` : `
@@ -317,55 +346,50 @@ function renderFilteredThreads(threads) {
     }).join('');
 }
 
-/* Filter, Search & Sort Handlers */
-function filterCategory(category, element) {
-    activeCategory = category;
-    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-    if (element) element.classList.add('active');
-    renderForum(getLocalForumThreads());
-}
-
-function handleForumSearch() {
-    const input = document.getElementById('forum-search-input');
-    if (input) {
-        searchQuery = input.value;
-        renderForum(getLocalForumThreads());
+/* Automated AI Content & Image Moderation Scanner */
+function runAutomatedModerationScan(title, content, imageUrl, isImageFlaggedByCloudinary) {
+    if (isImageFlaggedByCloudinary) {
+        return { isFlagged: true, reason: 'Imagen marcada por el bot de IA de Cloudinary (Gore/Contenido Inapropiado)' };
     }
-}
 
-function handleForumSort() {
-    const select = document.getElementById('forum-sort-select');
-    if (select) {
-        currentSort = select.value;
-        renderForum(getLocalForumThreads());
+    const sensitiveWords = ['violencia', 'gore', 'sangre', 'desnudo', 'pornografia', 'arma', 'droga', 'insulto', 'matar', 'ataque'];
+    const textToScan = `${title} ${content}`.toLowerCase();
+
+    for (let word of sensitiveWords) {
+        if (textToScan.includes(word)) {
+            return { isFlagged: true, reason: `Palabras sensibles detectadas: "${word}"` };
+        }
     }
-}
 
-/* Image Preview in Modal */
-function previewImageURL(url) {
-    const container = document.getElementById('image-preview-container');
-    const img = document.getElementById('image-preview-element');
-    if (!container || !img) return;
-
-    if (url.trim().startsWith('http://') || url.trim().startsWith('https://')) {
-        img.src = url.trim();
-        container.style.display = 'block';
-    } else {
-        container.style.display = 'none';
+    if (imageUrl && imageUrl.trim() !== '') {
+        const lowerUrl = imageUrl.toLowerCase();
+        if (lowerUrl.includes('nsfw') || lowerUrl.includes('adult') || lowerUrl.includes('gore') || lowerUrl.includes('blood')) {
+            return { isFlagged: true, reason: 'Patrón de imagen no permitido o inapropiado' };
+        }
     }
+
+    return { isFlagged: false, reason: '' };
 }
 
-/* Thread Actions (Create, Reply, Like, Solved, Delete, Report) */
+function checkAuthAndOpenNewThread() {
+    if (!currentUser) {
+        openModal('login-modal');
+        showToast('Debes iniciar sesión con tu cuenta de Google (Gmail) para publicar.', 'warning');
+        return;
+    }
+    openModal('new-thread-modal');
+}
+
+/* Create New Thread */
 function createNewThread(event) {
     event.preventDefault();
 
     if (!currentUser) {
         openModal('login-modal');
-        showToast('Debes iniciar sesión para publicar en el foro.', 'warning');
+        showToast('Debes iniciar sesión para publicar.', 'warning');
         return;
     }
 
-    // Anti-Spam Rate Limiting (15 seconds)
     const now = Date.now();
     if (now - lastPostTime < 15000) {
         const remaining = Math.ceil((15000 - (now - lastPostTime)) / 1000);
@@ -378,12 +402,21 @@ function createNewThread(event) {
     const locationInput = document.getElementById('thread-location-input');
     const phoneInput = document.getElementById('thread-phone-input');
     const imageInput = document.getElementById('thread-image-input');
+    const fileInput = document.getElementById('thread-image-file');
     const contentInput = document.getElementById('thread-content-input');
 
-    if (!titleInput.value.trim() || !contentInput.value.trim()) {
-        showToast('Por favor completa los campos obligatorios.', 'error');
+    const title = titleInput.value.trim();
+    const content = contentInput.value.trim();
+    const imageUrl = imageInput ? imageInput.value.trim() : '';
+
+    if (!title || !content) {
+        showToast('Por favor completa todos los campos requeridos.', 'error');
         return;
     }
+
+    const isCloudinaryFlagged = fileInput && fileInput.dataset.moderated === 'flagged';
+    const modResult = runAutomatedModerationScan(title, content, imageUrl, isCloudinaryFlagged);
+    const postStatus = modResult.isFlagged ? 'under_review' : 'active';
 
     const categoryNames = {
         perdidos: "🚨 Mascotas Perdidas",
@@ -396,19 +429,22 @@ function createNewThread(event) {
         id: "thread_" + Date.now(),
         category: categorySelect.value,
         categoryName: categoryNames[categorySelect.value] || "💬 General",
-        title: titleInput.value.trim(),
-        author: currentUser.name || "Vecino/a",
-        authorRole: currentUser.provider === 'Google' || currentUser.provider === 'Facebook' ? 'Vecino Verificado' : 'Vecino/a',
+        title: title,
+        author: currentUser.name || "Vecino/a de Gálvez",
+        authorEmail: currentUser.email || '',
+        authorRole: currentUser.isAdmin ? 'Administrador Reserva' : 'Vecino Verificado',
         authorUid: currentUser.uid,
-        location: locationInput.value.trim(),
-        phone: phoneInput.value.trim(),
-        imageUrl: imageInput.value.trim(),
+        location: locationInput.value.trim() || (currentUser.phone ? `Contacto: ${currentUser.phone}` : ''),
+        phone: phoneInput.value.trim() || currentUser.phone || '',
+        imageUrl: imageUrl,
         time: "Hace un instante",
         createdAt: Date.now(),
-        content: contentInput.value.trim(),
+        content: content,
         likes: 1,
         likedBy: [currentUser.uid],
         isSolved: false,
+        status: postStatus,
+        flagReason: modResult.reason || '',
         replies: []
     };
 
@@ -418,7 +454,11 @@ function createNewThread(event) {
         db.collection('forum_threads').doc(newThread.id).set(newThread).then(() => {
             resetNewThreadForm();
             closeModal('new-thread-modal');
-            showToast('¡Hilo publicado con éxito en la nube de la Reserva!', 'success');
+            if (modResult.isFlagged) {
+                showToast('Tu publicación está EN REVISIÓN por el bot de moderación antes de hacerse pública.', 'warning');
+            } else {
+                showToast('¡Hilo publicado con éxito en la nube de la Reserva!', 'success');
+            }
         }).catch(err => {
             showToast(`Error al guardar en Firebase: ${err.message}`, 'error');
         });
@@ -429,7 +469,110 @@ function createNewThread(event) {
 
         resetNewThreadForm();
         closeModal('new-thread-modal');
-        showToast('¡Hilo publicado correctamente en el foro!', 'success');
+
+        if (modResult.isFlagged) {
+            showToast('Tu publicación está EN REVISIÓN por moderación de imágenes/contenido.', 'warning');
+        } else {
+            showToast('¡Hilo publicado con éxito en el foro!', 'success');
+        }
+    }
+}
+
+/* Edit Existing Thread */
+function openEditThreadModal(threadId) {
+    if (!currentUser) {
+        openModal('login-modal');
+        return;
+    }
+
+    const threads = getLocalForumThreads();
+    const thread = threads.find(t => t.id === threadId || String(t.id) === String(threadId));
+    if (!thread) return;
+
+    if (thread.authorUid !== currentUser.uid && thread.author !== currentUser.name) {
+        showToast('Solo el creador del hilo puede editar esta publicación.', 'error');
+        return;
+    }
+
+    document.getElementById('edit-thread-id').value = thread.id;
+    document.getElementById('edit-thread-title-input').value = thread.title || '';
+    document.getElementById('edit-thread-category-select').value = thread.category || 'general';
+    document.getElementById('edit-thread-location-input').value = thread.location || '';
+    document.getElementById('edit-thread-phone-input').value = thread.phone || '';
+    document.getElementById('edit-thread-image-input').value = thread.imageUrl || '';
+    document.getElementById('edit-thread-content-input').value = thread.content || '';
+
+    previewEditImageURL(thread.imageUrl || '');
+    openModal('edit-thread-modal');
+}
+
+function previewEditImageURL(url) {
+    const container = document.getElementById('edit-image-preview-container');
+    const img = document.getElementById('edit-image-preview-element');
+    if (!container || !img) return;
+
+    if (url.trim().startsWith('http://') || url.trim().startsWith('https://') || url.trim().startsWith('data:image')) {
+        img.src = url.trim();
+        container.style.display = 'block';
+    } else {
+        container.style.display = 'none';
+    }
+}
+
+function submitEditThread(event) {
+    event.preventDefault();
+    if (!currentUser) return;
+
+    const threadId = document.getElementById('edit-thread-id').value;
+    const title = document.getElementById('edit-thread-title-input').value.trim();
+    const category = document.getElementById('edit-thread-category-select').value;
+    const location = document.getElementById('edit-thread-location-input').value.trim();
+    const phone = document.getElementById('edit-thread-phone-input').value.trim();
+    const imageUrl = document.getElementById('edit-thread-image-input').value.trim();
+    const content = document.getElementById('edit-thread-content-input').value.trim();
+    const fileInput = document.getElementById('edit-thread-image-file');
+
+    if (!title || !content) {
+        showToast('Por favor completa los campos requeridos.', 'error');
+        return;
+    }
+
+    const categoryNames = {
+        perdidos: "🚨 Mascotas Perdidas",
+        salud: "🩺 Consultas Médicas",
+        ayuda: "🆘 Pedidos de Ayuda",
+        general: "💬 General"
+    };
+
+    const isCloudinaryFlagged = fileInput && fileInput.dataset.moderated === 'flagged';
+    const modResult = runAutomatedModerationScan(title, content, imageUrl, isCloudinaryFlagged);
+    const postStatus = modResult.isFlagged ? 'under_review' : 'active';
+
+    const threads = getLocalForumThreads();
+    const thread = threads.find(t => t.id === threadId || String(t.id) === String(threadId));
+
+    if (thread) {
+        thread.title = title;
+        thread.category = category;
+        thread.categoryName = categoryNames[category] || "💬 General";
+        thread.location = location;
+        thread.phone = phone;
+        thread.imageUrl = imageUrl;
+        thread.content = content;
+        thread.status = postStatus;
+
+        if (typeof firebase !== 'undefined' && isFirebaseConfigured && db) {
+            db.collection('forum_threads').doc(thread.id).update({
+                title, category, categoryName: thread.categoryName, location, phone, imageUrl, content, status: postStatus
+            }).then(() => {
+                closeModal('edit-thread-modal');
+                showToast('¡Publicación actualizada con éxito!', 'success');
+            });
+        } else {
+            saveLocalForumThreads(threads);
+            closeModal('edit-thread-modal');
+            showToast('¡Publicación actualizada con éxito!', 'success');
+        }
     }
 }
 
@@ -438,15 +581,45 @@ function resetNewThreadForm() {
     document.getElementById('thread-location-input').value = '';
     document.getElementById('thread-phone-input').value = '';
     document.getElementById('thread-image-input').value = '';
+    const fileInput = document.getElementById('thread-image-file');
+    if (fileInput) fileInput.value = '';
+    const statusEl = document.getElementById('cloudinary-status-new');
+    if (statusEl) statusEl.innerText = '';
     document.getElementById('thread-content-input').value = '';
     const container = document.getElementById('image-preview-container');
     if (container) container.style.display = 'none';
 }
 
+function approveThread(threadId) {
+    if (!currentUser || !currentUser.isAdmin) {
+        showToast('Solo administradores pueden aprobar publicaciones.', 'error');
+        return;
+    }
+
+    const threads = getLocalForumThreads();
+    const thread = threads.find(t => t.id === threadId || String(t.id) === String(threadId));
+    if (!thread) return;
+
+    thread.status = 'active';
+    thread.flagReason = '';
+
+    if (typeof firebase !== 'undefined' && isFirebaseConfigured && db) {
+        db.collection('forum_threads').doc(thread.id).update({
+            status: 'active',
+            flagReason: ''
+        }).then(() => {
+            showToast('✅ Publicación aprobada y hecha pública para la comunidad.', 'success');
+        });
+    } else {
+        saveLocalForumThreads(threads);
+        showToast('✅ Publicación aprobada y hecha pública para la comunidad.', 'success');
+    }
+}
+
 function likeThread(threadId) {
     if (!currentUser) {
         openModal('login-modal');
-        showToast('Inicia sesión para votar publicaciones.', 'warning');
+        showToast('Inicia sesión para votar.', 'warning');
         return;
     }
 
@@ -511,10 +684,10 @@ function deleteThread(threadId) {
 }
 
 function reportThread(threadId) {
-    showToast('Gracias. Hemos registrado tu reporte para revisión de los moderadores.', 'info');
+    showToast('Gracias. Hemos registrado tu reporte para la revisión de moderadores.', 'info');
 }
 
-/* Modal Detailed Thread View & Conversation */
+/* Modal Detailed Thread View */
 function openThreadDetailModal(threadId) {
     const threads = getLocalForumThreads();
     const thread = threads.find(t => t.id === threadId || String(t.id) === String(threadId));
@@ -529,9 +702,16 @@ function openThreadDetailModal(threadId) {
     detailContainer.innerHTML = `
         <div class="thread-detail-body">
             <div class="thread-status-badges" style="margin-bottom: 10px;">
+                ${thread.status === 'under_review' ? '<span class="status-badge help"><i class="fas fa-clock"></i> EN REVISIÓN</span>' : ''}
                 ${thread.isSolved ? '<span class="status-badge solved"><i class="fas fa-check-circle"></i> ¡RESUELTO!</span>' : ''}
                 <span class="status-badge general">${escapeHTML(thread.categoryName || thread.category)}</span>
             </div>
+
+            ${thread.status === 'under_review' ? `
+                <div style="background: #fff3e0; color: #e65100; padding: 12px; border-radius: var(--radius-sm); font-size: 0.88rem;">
+                    <strong>⚠️ Estado: En Revisión por Moderación Automática.</strong> Solo tú puedes ver este hilo en este momento.
+                </div>
+            ` : ''}
             
             <h2 style="font-size: 1.4rem; color: var(--text-main); margin-bottom: 8px;">${escapeHTML(thread.title)}</h2>
             
@@ -562,7 +742,7 @@ function openThreadDetailModal(threadId) {
 
             <div class="replies-list-container">
                 ${(!thread.replies || thread.replies.length === 0) ? `
-                    <p style="color: var(--text-muted); font-size: 0.9rem; font-style: italic;">Aún no hay respuestas en este hilo. ¡Sé el primero en aportar información!</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; font-style: italic;">Aún no hay respuestas en este hilo. ¡Sé el primero en responder!</p>
                 ` : thread.replies.map(r => `
                     <div class="reply-item">
                         <div class="reply-header">
@@ -595,7 +775,7 @@ function submitReplyFromDetailModal(event) {
 function openReplyModal(threadId) {
     if (!currentUser) {
         openModal('login-modal');
-        showToast('Inicia sesión para responder.', 'warning');
+        showToast('Debes iniciar sesión para responder.', 'warning');
         return;
     }
 
@@ -631,7 +811,7 @@ function executeReplySubmission(threadId, replyText, callback) {
     const newReply = {
         id: "rep_" + Date.now(),
         author: currentUser.name || 'Vecino/a de Gálvez',
-        authorRole: currentUser.provider === 'Google' || currentUser.provider === 'Facebook' ? 'Vecino Verificado' : 'Vecino/a',
+        authorRole: 'Vecino Verificado',
         time: 'Hace un instante',
         text: replyText
     };
@@ -654,5 +834,41 @@ function executeReplySubmission(threadId, replyText, callback) {
             showToast('¡Respuesta publicada con éxito!', 'success');
             if (callback) callback();
         }
+    }
+}
+
+function filterCategory(category, element) {
+    activeCategory = category;
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    if (element) element.classList.add('active');
+    renderForum(getLocalForumThreads());
+}
+
+function handleForumSearch() {
+    const input = document.getElementById('forum-search-input');
+    if (input) {
+        searchQuery = input.value;
+        renderForum(getLocalForumThreads());
+    }
+}
+
+function handleForumSort() {
+    const select = document.getElementById('forum-sort-select');
+    if (select) {
+        currentSort = select.value;
+        renderForum(getLocalForumThreads());
+    }
+}
+
+function previewImageURL(url) {
+    const container = document.getElementById('image-preview-container');
+    const img = document.getElementById('image-preview-element');
+    if (!container || !img) return;
+
+    if (url.trim().startsWith('http://') || url.trim().startsWith('https://') || url.trim().startsWith('data:image')) {
+        img.src = url.trim();
+        container.style.display = 'block';
+    } else {
+        container.style.display = 'none';
     }
 }

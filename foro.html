@@ -174,37 +174,108 @@
         </div>
     </section>
 
-    <!-- MODAL: LOGIN / AUTH -->
+    <!-- MODAL: LOGIN / AUTH (GOOGLE / GMAIL REAL) -->
     <div class="modal-overlay" id="login-modal">
         <div class="modal-container">
             <button class="modal-close-btn" onclick="closeModal('login-modal')"><i class="fas fa-times"></i></button>
             <div style="text-align: center; margin-bottom: 25px;">
                 <img src="assets/img/cropped_circle_image.png" alt="Logo Reserva Canina" class="logo-img-circle" style="width:70px; height:70px; margin: 0 auto 15px auto;">
-                <h2>Iniciar Sesión en la Reserva</h2>
-                <p style="color: var(--text-muted); font-size: 0.9rem;">Elegí una opción para ingresar y participar en el foro de Gálvez.</p>
+                <h2>Acceso a la Comunidad Gálvez</h2>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Para mantener un entorno seguro y real, verificá tu identidad con tu cuenta de Gmail.</p>
             </div>
 
-            <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 25px;">
-                <button class="btn" onclick="loginWithGoogle()" style="background: #ffffff; color: #444; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm);">
-                    <i class="fab fa-google" style="color: #ea4335;"></i> Continuar con Google
-                </button>
-                <button class="btn" onclick="loginWithFacebook()" style="background: #1877f2; color: #ffffff;">
-                    <i class="fab fa-facebook-f"></i> Continuar con Facebook
+            <div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px;">
+                <button class="btn" onclick="loginWithGoogle()" style="background: #ffffff; color: #444; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); padding: 14px; font-weight: 700;">
+                    <i class="fab fa-google" style="color: #ea4335; font-size: 1.2rem;"></i> Iniciar Sesión con Google (Gmail)
                 </button>
             </div>
 
-            <div style="text-align: center; position: relative; margin-bottom: 20px;">
-                <hr style="border-top: 1px solid var(--border-color);">
-                <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--bg-card); padding: 0 10px; color: var(--text-light); font-size: 0.8rem;">O EN MODO INVITADO / DEMO</span>
+            <div style="background: var(--primary-light); color: var(--primary); padding: 12px 16px; border-radius: var(--radius-sm); font-size: 0.85rem; text-align: center; line-height: 1.4;">
+                <i class="fas fa-shield-alt"></i> Tu cuenta nos ayuda a prevenir spam y garantizar publicaciones verídicas para las mascotas.
             </div>
+        </div>
+    </div>
 
-            <form onsubmit="loginAsGuest(event)">
-                <div class="form-group">
-                    <label class="form-label">Tu Nombre o Apodo:</label>
-                    <input type="text" id="guest-name" class="form-control" placeholder="Ej: Vecino de Gálvez" required>
+    <!-- MODAL: CONFIGURACIÓN DE PERFIL DE USUARIO -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal-container" style="max-width: 520px;">
+            <button class="modal-close-btn" onclick="closeModal('profile-modal')"><i class="fas fa-times"></i></button>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; margin: 0 auto 12px auto; border: 3px solid var(--primary);">
+                    <img id="profile-avatar-img" src="" alt="Avatar" style="width: 100%; height: 100%; object-fit: cover;">
                 </div>
-                <button type="submit" class="btn btn-outline" style="width: 100%;">
-                    Ingresar como Invitado
+                <h2>Mi Perfil en el Foro</h2>
+                <p id="profile-email-text" style="color: var(--text-muted); font-size: 0.88rem;"></p>
+            </div>
+
+            <form onsubmit="saveProfileSettings(event)">
+                <div class="form-group">
+                    <label class="form-label">Nombre o Apodo Público (Visible en tus posteos):</label>
+                    <input type="text" id="profile-display-name" class="form-control" placeholder="Ej: María Fernández" required minlength="2" maxlength="50">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Teléfono de contacto por defecto (Opcional):</label>
+                    <input type="tel" id="profile-phone-input" class="form-control" placeholder="Ej: 3404-556677">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-save"></i> Guardar Cambios del Perfil
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR HILO -->
+    <div class="modal-overlay" id="edit-thread-modal">
+        <div class="modal-container" style="max-width: 620px;">
+            <button class="modal-close-btn" onclick="closeModal('edit-thread-modal')"><i class="fas fa-times"></i></button>
+            <h2>Editar Publicación</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">Modificá los datos o actualizá la información de tu hilo.</p>
+
+            <form onsubmit="submitEditThread(event)">
+                <input type="hidden" id="edit-thread-id">
+                <div class="form-group">
+                    <label class="form-label">Título de la publicación <span style="color:red;">*</span>:</label>
+                    <input type="text" id="edit-thread-title-input" class="form-control" required minlength="5" maxlength="120">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Categoría <span style="color:red;">*</span>:</label>
+                        <select id="edit-thread-category-select" class="form-control">
+                            <option value="perdidos">🚨 Mascotas Perdidas y Encontradas</option>
+                            <option value="salud">🩺 Consultas Médicas / Veterinarias</option>
+                            <option value="ayuda">🆘 Pedidos de Ayuda y Tránsito</option>
+                            <option value="general">💬 General y Charlas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Barrio / Zona de Gálvez:</label>
+                        <input type="text" id="edit-thread-location-input" class="form-control">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Teléfono de contacto:</label>
+                        <input type="tel" id="edit-thread-phone-input" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Subir Foto desde Celular/PC (Cloudinary):</label>
+                        <input type="file" id="edit-thread-image-file" class="form-control" accept="image/*" onchange="handleCloudinaryFileUpload(this, 'edit')">
+                        <div id="cloudinary-status-edit" style="font-size:0.82rem; color:var(--primary); font-weight:600; margin-top:4px;"></div>
+                        <input type="hidden" id="edit-thread-image-input">
+                    </div>
+                </div>
+
+                <div id="edit-image-preview-container" style="display: none; margin-bottom: 15px; text-align: center;">
+                    <img id="edit-image-preview-element" src="" alt="Vista Previa" style="max-height: 180px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); margin: 0 auto;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Descripción detallada <span style="color:red;">*</span>:</label>
+                    <textarea id="edit-thread-content-input" class="form-control" required minlength="10" maxlength="2000"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-check"></i> Guardar Cambios
                 </button>
             </form>
         </div>
@@ -244,8 +315,10 @@
                         <input type="tel" id="thread-phone-input" class="form-control" placeholder="Ej: 3404-556677">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">URL Foto de la Mascota (Opcional):</label>
-                        <input type="url" id="thread-image-input" class="form-control" placeholder="https://ejemplo.com/foto.jpg" oninput="previewImageURL(this.value)">
+                        <label class="form-label">Foto de la Mascota (Gratis via Cloudinary):</label>
+                        <input type="file" id="thread-image-file" class="form-control" accept="image/*" onchange="handleCloudinaryFileUpload(this, 'new')">
+                        <div id="cloudinary-status-new" style="font-size:0.82rem; color:var(--primary); font-weight:600; margin-top:4px;"></div>
+                        <input type="hidden" id="thread-image-input">
                     </div>
                 </div>
 
