@@ -47,9 +47,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initRefugioSection() {
     setupRefugioListeners();
+    setupGoalDonationsListener();
 }
 
 function setupRefugioListeners() {
+    const needsContainer = document.getElementById('refugio-needs-container');
+    const goalsContainer = document.getElementById('refugio-goals-container');
+    if (needsContainer && typeof getPawLoaderHTML === 'function') {
+        needsContainer.innerHTML = getPawLoaderHTML('Cargando necesidades de hoy...');
+    }
+    if (goalsContainer && typeof getPawLoaderHTML === 'function') {
+        goalsContainer.innerHTML = getPawLoaderHTML('Cargando metas y proyectos del refugio...');
+    }
+
     if (typeof firebase !== 'undefined' && isFirebaseConfigured && db) {
         // Needs Listener
         db.collection('refugio_needs').onSnapshot((snapshot) => {
@@ -483,3 +493,192 @@ function deleteGoal(goalId) {
         showToast('Meta eliminada.', 'info');
     }
 }
+
+/* ==========================================================================
+   GOAL DONATION MODAL & FLOATING DONORS NETWORK
+   ========================================================================== */
+let goalDonationsList = [
+    {
+        id: "don_1",
+        goalId: "goal_caniles",
+        author: "Familia Pérez",
+        authorPhoto: "assets/img/cropped_circle_image.png",
+        authorUid: "sample_1",
+        amount: 2500,
+        comment: "¡Fuerza equipo con la construcción de los nuevos caniles!",
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: "don_2",
+        goalId: "goal_caniles",
+        author: "María L.",
+        authorPhoto: "assets/img/cropped_circle_image.png",
+        authorUid: "sample_2",
+        amount: 1000,
+        comment: "¡Un granito de arena para los rescataditos de Gálvez!",
+        createdAt: new Date().toISOString()
+    }
+];
+
+function setupGoalDonationsListener() {
+    if (typeof firebase !== 'undefined' && isFirebaseConfigured && db) {
+        db.collection('refugio_goal_donations').onSnapshot((snapshot) => {
+            const list = [];
+            snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
+            if (list.length > 0) {
+                goalDonationsList = list;
+            }
+            const activeModalGoalId = document.getElementById('donate-modal-goal-id')?.value;
+            if (activeModalGoalId) {
+                renderGoalFloatingDonors(activeModalGoalId);
+            }
+        });
+    }
+}
+
+function openGoalDonateModal(goalId) {
+    const goal = refugioGoalsList.find(g => String(g.id) === String(goalId));
+    if (!goal) return;
+
+    const modalGoalId = document.getElementById('donate-modal-goal-id');
+    const modalTitle = document.getElementById('donate-modal-goal-title');
+    const modalCategory = document.getElementById('donate-modal-goal-category');
+    const modalCurrent = document.getElementById('donate-modal-goal-current');
+    const modalTarget = document.getElementById('donate-modal-goal-target');
+    const modalBar = document.getElementById('donate-modal-goal-bar');
+    const nameInput = document.getElementById('donate-name-input');
+
+    if (modalGoalId) modalGoalId.value = goal.id;
+    if (modalTitle) modalTitle.innerText = `Colaborar con: ${goal.title}`;
+    if (modalCategory) modalCategory.innerText = goal.category || 'Objetivo Refugio';
+
+    const target = Number(goal.targetAmount) || 1;
+    const current = Number(goal.currentAmount) || 0;
+    const pct = Math.min(100, Math.round((current / target) * 100));
+
+    if (modalCurrent) modalCurrent.innerText = `$${current.toLocaleString('es-AR')} recaudados (${pct}%)`;
+    if (modalTarget) modalTarget.innerText = `Objetivo: $${target.toLocaleString('es-AR')}`;
+    if (modalBar) modalBar.style.width = `${pct}%`;
+
+    if (nameInput) {
+        if (currentUser && currentUser.name) {
+            nameInput.value = currentUser.name;
+        } else {
+            nameInput.value = '';
+        }
+    }
+
+    renderGoalFloatingDonors(goal.id);
+    openModal('goal-donate-modal');
+}
+window.openGoalDonateModal = openGoalDonateModal;
+
+function renderGoalFloatingDonors(goalId) {
+    const container = document.getElementById('goal-floating-donors-container');
+    if (!container) return;
+
+    const goalDonations = goalDonationsList.filter(d => String(d.goalId) === String(goalId));
+
+    if (goalDonations.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; color: var(--text-muted); font-size: 0.9rem; z-index: 5;">
+                <i class="fas fa-hand-holding-heart" style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"></i>
+                <div>Sé el primero en colaborar con esta meta y dejar tu mensaje flotante de apoyo.</div>
+            </div>
+        `;
+        return;
+    }
+
+    const positions = [
+        { top: '15%', left: '6%' },
+        { top: '18%', right: '6%' },
+        { top: '55%', left: '8%' },
+        { top: '58%', right: '8%' },
+        { top: '35%', left: '30%' }
+    ];
+
+    container.innerHTML = goalDonations.map((d, index) => {
+        const pos = positions[index % positions.length];
+        const isAuthor = currentUser && (currentUser.uid === d.authorUid || currentUser.email === d.authorEmail);
+        const isAdmin = currentUser && currentUser.isAdmin;
+        const canDelete = isAuthor || isAdmin;
+        const delay = (index * 0.4).toFixed(1);
+
+        return `
+            <div class="floating-donor-card" style="top: ${pos.top}; ${pos.left ? `left: ${pos.left}` : `right: ${pos.right}`}; animation-delay: ${delay}s;">
+                <img src="${escapeHTML(d.authorPhoto || 'assets/img/cropped_circle_image.png')}" alt="${escapeHTML(d.author)}" class="floating-donor-avatar" onerror="this.src='assets/img/cropped_circle_image.png'">
+                <div class="floating-donor-info">
+                    <div class="floating-donor-name">
+                        ${escapeHTML(d.author || 'Vecino/a')}
+                        <span class="floating-donor-amount">+$${Number(d.amount || 0).toLocaleString('es-AR')}</span>
+                        ${canDelete ? `<i class="fas fa-trash" style="color: #c62828; cursor: pointer; margin-left: 6px; font-size: 0.75rem;" onclick="deleteGoalDonation('${d.id}', '${d.goalId}')" title="Eliminar mensaje"></i>` : ''}
+                    </div>
+                    ${d.comment ? `<div class="floating-donor-comment">"${escapeHTML(d.comment)}"</div>` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+async function handleGoalDonationSubmit(event) {
+    event.preventDefault();
+    const goalId = document.getElementById('donate-modal-goal-id').value;
+    const amount = Number(document.getElementById('donate-amount-input').value) || 0;
+    const name = document.getElementById('donate-name-input').value.trim() || (currentUser ? currentUser.name : 'Vecino/a Anónimo/a');
+    const comment = document.getElementById('donate-comment-input').value.trim();
+
+    if (amount <= 0) {
+        showToast('Por favor ingresa un monto válido.', 'error');
+        return;
+    }
+
+    const goal = refugioGoalsList.find(g => String(g.id) === String(goalId));
+    if (!goal) return;
+
+    goal.currentAmount = (Number(goal.currentAmount) || 0) + amount;
+
+    const donationItem = {
+        id: "don_" + Date.now(),
+        goalId: goal.id,
+        author: name,
+        authorPhoto: currentUser ? currentUser.photoURL : 'assets/img/cropped_circle_image.png',
+        authorUid: currentUser ? currentUser.uid : '',
+        authorEmail: currentUser ? currentUser.email : '',
+        amount,
+        comment,
+        createdAt: new Date().toISOString()
+    };
+
+    goalDonationsList.unshift(donationItem);
+
+    if (typeof firebase !== 'undefined' && isFirebaseConfigured && db) {
+        db.collection('refugio_goals').doc(goal.id).update({
+            currentAmount: goal.currentAmount
+        });
+        db.collection('refugio_goal_donations').doc(donationItem.id).set(donationItem);
+    } else {
+        saveLocalGoals(refugioGoalsList);
+    }
+
+    renderRefugioGoals(refugioGoalsList);
+    renderGoalFloatingDonors(goal.id);
+    document.getElementById('donate-amount-input').value = '';
+    document.getElementById('donate-comment-input').value = '';
+
+    showToast(`🎉 ¡Muchas gracias por tu contribución de $${amount.toLocaleString('es-AR')} a la meta!`, 'success');
+}
+window.handleGoalDonationSubmit = handleGoalDonationSubmit;
+
+function deleteGoalDonation(donationId, goalId) {
+    if (!confirm('¿Deseas eliminar este comentario/aporte flotante?')) return;
+
+    goalDonationsList = goalDonationsList.filter(d => String(d.id) !== String(donationId));
+
+    if (typeof firebase !== 'undefined' && isFirebaseConfigured && db) {
+        db.collection('refugio_goal_donations').doc(String(donationId)).delete();
+    }
+
+    renderGoalFloatingDonors(goalId);
+    showToast('Comentario eliminado.', 'info');
+}
+window.deleteGoalDonation = deleteGoalDonation;

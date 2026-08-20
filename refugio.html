@@ -237,6 +237,76 @@
         </div>
     </div>
 
+    <!-- MODAL: DONATE / COLLABORATE WITH SPECIFIC GOAL -->
+    <div class="modal-overlay" id="goal-donate-modal">
+        <div class="modal-container" style="max-width: 680px;">
+            <button class="modal-close-btn" onclick="closeModal('goal-donate-modal')"><i class="fas fa-times"></i></button>
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <span class="badge badge-secondary" id="donate-modal-goal-category">Meta de Obra</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted);" id="donate-modal-goal-status">En progreso</span>
+            </div>
+            <h2 id="donate-modal-goal-title" style="font-size: 1.5rem; margin-bottom: 10px;">Colaborar con esta Meta</h2>
+            
+            <!-- Progress Bar -->
+            <div style="background: rgba(0,0,0,0.06); border-radius: 20px; height: 12px; overflow: hidden; margin-bottom: 10px;">
+                <div id="donate-modal-goal-bar" style="background: linear-gradient(90deg, var(--primary), var(--secondary)); height: 100%; width: 0%; transition: width 0.6s ease;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 700; margin-bottom: 20px;">
+                <span style="color: var(--primary);" id="donate-modal-goal-current">$0 recaudados</span>
+                <span style="color: var(--text-muted);" id="donate-modal-goal-target">Objetivo: $0</span>
+            </div>
+
+            <!-- Payment Details Box -->
+            <div style="background: var(--bg-body); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 20px;">
+                <h4 style="font-size: 0.95rem; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; color: var(--primary);">
+                    <i class="fas fa-university"></i> Datos Bancarios para Donación Directa
+                </h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.88rem;">
+                    <div><strong>Alias MercadoPago:</strong> <code style="background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px;">reserva.canina.galvez</code></div>
+                    <div><strong>CBU:</strong> <code style="background: rgba(0,0,0,0.06); padding: 2px 6px; border-radius: 4px;">0000003100049281749201</code></div>
+                    <div><strong>Titular:</strong> Reserva Canina Gálvez</div>
+                    <div><strong>Banco:</strong> Banco de Santa Fe</div>
+                </div>
+            </div>
+
+            <!-- Contribution Registration & Comment Form -->
+            <form onsubmit="handleGoalDonationSubmit(event)" style="margin-bottom: 25px;">
+                <input type="hidden" id="donate-modal-goal-id">
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Monto Aportado ($ ARS) <span style="color:red;">*</span>:</label>
+                        <input type="number" id="donate-amount-input" class="form-control" placeholder="Ej: 1000" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tu Nombre / Pseudónimo:</label>
+                        <input type="text" id="donate-name-input" class="form-control" placeholder="Ej: Familia Pérez">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mensaje de Apoyo Comunitario (Opcional):</label>
+                    <input type="text" id="donate-comment-input" class="form-control" placeholder="Ej: ¡Mucho amor y fuerza para los perritos de Gálvez! ❤️">
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-heart"></i> Registrar Colaboración y Sumar al Objetivo
+                </button>
+            </form>
+
+            <!-- Floating Donor Showcase Title -->
+            <h4 style="font-size: 1rem; color: var(--text-main); margin-bottom: 5px; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-comments" style="color: var(--secondary);"></i> Red Flotante de Vecinos Donantes
+            </h4>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Comentarios en tiempo real de quienes colaboran con esta meta:</p>
+
+            <!-- Floating Donors Container -->
+            <div id="goal-floating-donors-container" class="floating-donors-container">
+                <!-- Dynamically rendered floating cards -->
+            </div>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer class="main-footer">
         <div class="container">

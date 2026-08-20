@@ -29,25 +29,35 @@ function initForum() {
     setupFirebaseOrLocalListeners();
 }
 
+let currentThreadsList = [];
+
 /* Dual Connectivity & Realtime Persistence */
 function setupFirebaseOrLocalListeners() {
+    const container = document.getElementById('forum-threads-list');
+    if (container && typeof getPawLoaderHTML === 'function') {
+        container.innerHTML = getPawLoaderHTML('Cargando publicaciones del foro...');
+    }
+
     if (typeof firebase !== 'undefined' && isFirebaseConfigured && db) {
         db.collection('forum_threads').orderBy('createdAt', 'desc').onSnapshot((snapshot) => {
             const threads = [];
             snapshot.forEach(doc => {
                 threads.push({ id: doc.id, ...doc.data() });
             });
+            currentThreadsList = threads;
             if (threads.length === 0) {
                 seedInitialForumThreads();
             } else {
-                renderForum(threads);
+                renderForum(currentThreadsList);
             }
         }, (error) => {
             console.warn("Error en Firestore listener. Usando almacenamiento local:", error);
-            renderForum(getLocalForumThreads());
+            currentThreadsList = getLocalForumThreads();
+            renderForum(currentThreadsList);
         });
     } else {
-        renderForum(getLocalForumThreads());
+        currentThreadsList = getLocalForumThreads();
+        renderForum(currentThreadsList);
     }
 }
 
@@ -874,18 +884,36 @@ function executeReplySubmission(threadId, replyText, callback) {
     }
 }
 
+function handleCreateThreadClick() {
+    if (!currentUser) {
+        if (typeof showToast === 'function') {
+            showToast('Debes iniciar sesión con Google para publicar un hilo en el foro.', 'warning');
+        }
+        if (typeof openModal === 'function') {
+            openModal('login-modal');
+        }
+        return;
+    }
+    if (typeof openModal === 'function') {
+        openModal('new-thread-modal');
+    }
+}
+window.handleCreateThreadClick = handleCreateThreadClick;
+
 function filterCategory(category, element) {
     activeCategory = category;
     document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
     if (element) element.classList.add('active');
-    renderForum(getLocalForumThreads());
+    const threadsToRender = (currentThreadsList && currentThreadsList.length > 0) ? currentThreadsList : getLocalForumThreads();
+    renderForum(threadsToRender);
 }
 
 function handleForumSearch() {
     const input = document.getElementById('forum-search-input');
     if (input) {
         searchQuery = input.value;
-        renderForum(getLocalForumThreads());
+        const threadsToRender = (currentThreadsList && currentThreadsList.length > 0) ? currentThreadsList : getLocalForumThreads();
+        renderForum(threadsToRender);
     }
 }
 
@@ -893,7 +921,8 @@ function handleForumSort() {
     const select = document.getElementById('forum-sort-select');
     if (select) {
         currentSort = select.value;
-        renderForum(getLocalForumThreads());
+        const threadsToRender = (currentThreadsList && currentThreadsList.length > 0) ? currentThreadsList : getLocalForumThreads();
+        renderForum(threadsToRender);
     }
 }
 

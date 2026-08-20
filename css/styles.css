@@ -1543,3 +1543,140 @@ html, body {
     }
 }
 
+/* PAW PRINT LOADER ANIMATION */
+.paw-loader-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 20px;
+    width: 100%;
+    grid-column: 1 / -1;
+    text-align: center;
+}
+
+.paw-prints-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+}
+
+.paw-print-icon {
+    font-size: 1.8rem;
+    color: var(--primary);
+    opacity: 0.2;
+    transform: scale(0.8);
+    animation: pawLoop 1.6s infinite ease-in-out;
+}
+
+.paw-print-icon:nth-child(1) { animation-delay: 0s; }
+.paw-print-icon:nth-child(2) { animation-delay: 0.3s; }
+.paw-print-icon:nth-child(3) { animation-delay: 0.6s; }
+.paw-print-icon:nth-child(4) { animation-delay: 0.9s; }
+.paw-print-icon:nth-child(5) { animation-delay: 1.2s; }
+
+@keyframes pawLoop {
+    0%, 100% {
+        opacity: 0.2;
+        transform: scale(0.8) translateY(0);
+    }
+    40% {
+        opacity: 1;
+        transform: scale(1.18) translateY(-6px);
+        color: var(--secondary);
+    }
+    80% {
+        opacity: 0.4;
+        transform: scale(0.9) translateY(0);
+    }
+}
+
+.paw-loader-text {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+/* FLOATING DONOR CARDS NETWORK */
+.floating-donors-container {
+    position: relative;
+    width: 100%;
+    min-height: 280px;
+    background: linear-gradient(135deg, rgba(27,67,50,0.06), rgba(45,106,79,0.12));
+    border-radius: var(--radius-lg);
+    border: 1px dashed var(--primary);
+    overflow: hidden;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+.floating-donor-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    padding: 12px 18px;
+    border-radius: 40px;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: absolute;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
+    animation: floatBob 6s infinite ease-in-out alternate;
+    max-width: 320px;
+    z-index: 2;
+}
+
+.floating-donor-card:hover {
+    transform: scale(1.08) translateY(-4px) !important;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.18);
+    z-index: 10;
+}
+
+.floating-donor-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+    flex-shrink: 0;
+}
+
+.floating-donor-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.floating-donor-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.floating-donor-amount {
+    font-size: 0.76rem;
+    color: var(--primary);
+    font-weight: 800;
+}
+
+.floating-donor-comment {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin-top: 2px;
+    line-height: 1.3;
+}
+
+@keyframes floatBob {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(1.5deg); }
+    100% { transform: translateY(6px) rotate(-1.5deg); }
+}
+

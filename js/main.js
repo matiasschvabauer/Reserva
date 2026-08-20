@@ -229,3 +229,20 @@ function escapeHTML(str) {
     );
 }
 window.escapeHTML = escapeHTML;
+
+/* Paw Prints Loading Animation HTML Helper */
+function getPawLoaderHTML(loadingText = "Cargando datos desde la nube...") {
+    return `
+        <div class="paw-loader-box">
+            <div class="paw-prints-wrapper">
+                <i class="fas fa-paw paw-print-icon"></i>
+                <i class="fas fa-paw paw-print-icon"></i>
+                <i class="fas fa-paw paw-print-icon"></i>
+                <i class="fas fa-paw paw-print-icon"></i>
+                <i class="fas fa-paw paw-print-icon"></i>
+            </div>
+            <div class="paw-loader-text">${loadingText}</div>
+        </div>
+    `;
+}
+window.getPawLoaderHTML = getPawLoaderHTML;

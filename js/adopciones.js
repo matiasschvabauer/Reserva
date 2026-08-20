@@ -94,6 +94,11 @@ function initAdoptions() {
 }
 
 function setupAdoptionsListener() {
+    const grid = document.getElementById('dogs-grid');
+    if (grid && typeof getPawLoaderHTML === 'function') {
+        grid.innerHTML = getPawLoaderHTML('Buscando perritos en la Reserva...');
+    }
+
     if (typeof firebase !== 'undefined' && isFirebaseConfigured && db) {
         db.collection('adoptions').onSnapshot((snapshot) => {
             const list = [];
