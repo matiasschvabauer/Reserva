@@ -2,22 +2,17 @@
    RESERVA CANINA GÁLVEZ - FORUM LOGIC, CLOUDINARY UPLOAD & MODERATION
    ========================================================================== */
 
+function escapeHTML(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+}
+window.escapeHTML = escapeHTML;
+
 // Cloudinary Free Unsigned Configuration
 const CLOUDINARY_CONFIG = {
     cloudName: 'doissrwhj', // Tu Cloud Name de Cloudinary
     uploadPreset: 'reserva_preset'     // Tu Unsigned Upload Preset en Cloudinary
 };
-
-// Anti-XSS Sanitization Function
-function escapeHTML(str) {
-    if (typeof str !== 'string') return '';
-    return str
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-}
 
 const INITIAL_THREADS = [];
 
@@ -42,14 +37,46 @@ function setupFirebaseOrLocalListeners() {
             snapshot.forEach(doc => {
                 threads.push({ id: doc.id, ...doc.data() });
             });
-            renderForum(threads);
+            if (threads.length === 0) {
+                seedInitialForumThreads();
+            } else {
+                renderForum(threads);
+            }
         }, (error) => {
-            console.warn("Error en Firestore listener. Usando almacenamiento local.", error);
+            console.warn("Error en Firestore listener. Usando almacenamiento local:", error);
             renderForum(getLocalForumThreads());
         });
     } else {
         renderForum(getLocalForumThreads());
     }
+}
+
+function seedInitialForumThreads() {
+    const sampleThread = {
+        id: "thread_bienvenida",
+        title: "¡Bienvenidos al Foro Oficial de la Reserva Canina Gálvez!",
+        category: "general",
+        content: "Espacio creado para conversar sobre adopciones, tránsito, salud animal y voluntariado en nuestra ciudad de Gálvez. ¡Sumate a la comunidad!",
+        author: "Reserva Canina Gálvez",
+        authorEmail: "matiasschvbauer@gmail.com",
+        authorRole: "Administrador Reserva",
+        createdAt: new Date().toISOString(),
+        status: "approved",
+        likes: 5,
+        likedBy: [],
+        replies: [
+            {
+                id: "reply_1",
+                author: "Vecino/a de Gálvez",
+                content: "¡Excelente iniciativa! Muchas gracias por el trabajo que hacen por los callejeritos.",
+                createdAt: new Date().toISOString()
+            }
+        ]
+    };
+    if (typeof firebase !== 'undefined' && isFirebaseConfigured && db) {
+        db.collection('forum_threads').doc(sampleThread.id).set(sampleThread).catch(e => console.warn("Seed thread error:", e));
+    }
+    renderForum([sampleThread]);
 }
 
 function getLocalForumThreads() {

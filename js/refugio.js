@@ -2,6 +2,12 @@
    RESERVA CANINA GÁLVEZ - REFUGIO: URGENT NEEDS & FUNDRAISING GOALS
    ========================================================================== */
 
+function escapeHTML(str) {
+    if (str === null || str === undefined) return '';
+    return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+}
+window.escapeHTML = escapeHTML;
+
 const INITIAL_REFUGIO_NEEDS = [
     { id: "need_1", title: "Alimento Balanceado Adulto (Bolsas 15kg/20kg)", urgency: "Alta", icon: "fa-bone" },
     { id: "need_2", title: "Gasas estériles, vendas y Pervinox para curaciones", urgency: "Urgente", icon: "fa-band-aid" },
