@@ -616,7 +616,7 @@ function renderPageFloatingDonors() {
                 <div class="floating-donor-info">
                     <div class="floating-donor-name">
                         ${escapeHTML(d.author || 'Vecino/a')}
-                        <span class="floating-donor-amount">+$${Number(d.amount || 0).toLocaleString('es-AR')}</span>
+                        <span class="floating-donor-badge" style="font-size: 0.72rem; color: var(--primary); font-weight: 700; display: inline-flex; align-items: center; gap: 3px;"><i class="fas fa-heart" style="color: #e53935; font-size: 0.7rem;"></i> Donante</span>
                         ${canDelete ? `<i class="fas fa-trash" style="color: #c62828; cursor: pointer; margin-left: 6px; font-size: 0.75rem;" onclick="deleteGoalDonation('${d.id}', '${d.goalId}')" title="Eliminar mensaje"></i>` : ''}
                     </div>
                     ${d.comment ? `<div class="floating-donor-comment">"${escapeHTML(d.comment)}"</div>` : ''}
@@ -664,7 +664,7 @@ function renderGoalFloatingDonors(goalId) {
                 <div class="floating-donor-info">
                     <div class="floating-donor-name">
                         ${escapeHTML(d.author || 'Vecino/a')}
-                        <span class="floating-donor-amount">+$${Number(d.amount || 0).toLocaleString('es-AR')}</span>
+                        <span class="floating-donor-badge" style="font-size: 0.72rem; color: var(--primary); font-weight: 700; display: inline-flex; align-items: center; gap: 3px;"><i class="fas fa-heart" style="color: #e53935; font-size: 0.7rem;"></i> Donante</span>
                         ${canDelete ? `<i class="fas fa-trash" style="color: #c62828; cursor: pointer; margin-left: 6px; font-size: 0.75rem;" onclick="deleteGoalDonation('${d.id}', '${d.goalId}')" title="Eliminar mensaje"></i>` : ''}
                     </div>
                     ${d.comment ? `<div class="floating-donor-comment">"${escapeHTML(d.comment)}"</div>` : ''}
