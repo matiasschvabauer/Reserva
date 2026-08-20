@@ -78,6 +78,8 @@
     <section class="section-padding">
         <div class="container">
             
+            <div id="admin-adoptions-header-actions" style="margin-bottom: 20px; text-align: right;"></div>
+
             <!-- Filters Bar -->
             <div style="background: var(--bg-card); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border-color); margin-bottom: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: center;">
                 <div>
@@ -116,11 +118,87 @@
         </div>
     </section>
 
-    <!-- DOG DETAIL MODAL -->
+    <!-- MODAL: DOG DETAIL -->
     <div class="modal-overlay" id="dog-detail-modal">
         <div class="modal-container">
             <button class="modal-close-btn" onclick="closeModal('dog-detail-modal')"><i class="fas fa-times"></i></button>
             <div id="dog-modal-content"></div>
+        </div>
+    </div>
+
+    <!-- MODAL: CREATE / EDIT DOG (ADMIN) -->
+    <div class="modal-overlay" id="dog-edit-modal">
+        <div class="modal-container" style="max-width: 620px;">
+            <button class="modal-close-btn" onclick="closeModal('dog-edit-modal')"><i class="fas fa-times"></i></button>
+            <h2 id="dog-edit-modal-title">Agregar Mascota en Adopción</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Completá los datos de la mascota para publicarla en el catálogo en la nube.</p>
+
+            <form onsubmit="handleDogFormSubmit(event)">
+                <input type="hidden" id="dog-edit-id">
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Nombre de la Mascota <span style="color:red;">*</span>:</label>
+                        <input type="text" id="dog-edit-name" class="form-control" placeholder="Ej: Leopoldo, Luna..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Edad estimada <span style="color:red;">*</span>:</label>
+                        <input type="text" id="dog-edit-age" class="form-control" placeholder="Ej: Cachorro (5 meses), Adulto..." required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Tamaño:</label>
+                        <select id="dog-edit-size" class="form-control">
+                            <option value="Pequeño">Pequeño</option>
+                            <option value="Mediano" selected>Mediano</option>
+                            <option value="Grande">Grande</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Sexo:</label>
+                        <select id="dog-edit-gender" class="form-control">
+                            <option value="macho">Macho ♂</option>
+                            <option value="hembra">Hembra ♀</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Estado:</label>
+                        <select id="dog-edit-status" class="form-control">
+                            <option value="Disponible">Disponible</option>
+                            <option value="Urgente">Urgente 🚨</option>
+                            <option value="En Proceso">En Proceso 🏠</option>
+                            <option value="Adoptado">Adoptado 🎉</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Subir Foto (Cloudinary con barra de progreso):</label>
+                    <input type="file" id="dog-edit-file-input" class="form-control" accept="image/*">
+                    <input type="hidden" id="dog-edit-image-url">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Estado Sanitaciones / Salud:</label>
+                    <input type="text" id="dog-edit-health" class="form-control" placeholder="Ej: Vacunado/a, Castrado/a, Desparasitado/a">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Resumen / Descripción corta <span style="color:red;">*</span>:</label>
+                    <textarea id="dog-edit-desc" class="form-control" rows="2" placeholder="Breve resumen visible en la tarjeta..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Historia detallada (Modal):</label>
+                    <textarea id="dog-edit-story" class="form-control" rows="3" placeholder="Historia completa del rescate..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; background: #2e7d32;">
+                    <i class="fas fa-cloud-upload-alt"></i> Guardar Ficha en la Nube
+                </button>
+            </form>
         </div>
     </div>
 
@@ -171,6 +249,14 @@
         </div>
     </footer>
 
+    <!-- Firebase App & Auth SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin-bar.js"></script>
     <script src="js/main.js"></script>
     <script src="js/adopciones.js"></script>
 </body>

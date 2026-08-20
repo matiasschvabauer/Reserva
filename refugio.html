@@ -74,10 +74,46 @@
         </div>
     </section>
 
-    <!-- URGENT NEEDS -->
+    <!-- URGENT NEEDS TODAY (DYNAMIC & MANAGED) -->
+    <section class="section-padding" id="necesidades-hoy" style="background: var(--bg-body); border-bottom: 1px solid var(--border-color);">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px;">
+                <div>
+                    <span class="badge badge-urgent" style="margin-bottom: 8px;">Actualizado Hoy</span>
+                    <h2 class="section-title" style="margin-bottom: 5px;">🚨 Necesidades URGENTES de Hoy</h2>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Insumos críticos requeridos hoy en el refugio de Gálvez.</p>
+                </div>
+                <div id="admin-needs-action-container"></div>
+            </div>
+
+            <div id="refugio-needs-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+                <!-- Rendered dynamically by js/refugio.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- FUNDRAISING GOALS / METAS DEL REFUGIO (DYNAMIC & MANAGED) -->
+    <section class="section-padding" id="metas-donaciones" style="background: var(--bg-card); border-bottom: 1px solid var(--border-color);">
+        <div class="container">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 30px;">
+                <div>
+                    <span class="badge badge-primary" style="margin-bottom: 8px;">Objetivos en Marcha</span>
+                    <h2 class="section-title" style="margin-bottom: 5px;">🎯 Metas y Objetivos de Recaudación</h2>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Transparencia total: conocé nuestras metas activas y acompañá nuestro avance.</p>
+                </div>
+                <div id="admin-goals-action-container"></div>
+            </div>
+
+            <div id="refugio-goals-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px;">
+                <!-- Rendered dynamically by js/refugio.js -->
+            </div>
+        </div>
+    </section>
+
+    <!-- INSUMOS Y CATEGORÍAS GENERALES -->
     <section class="section-padding">
         <div class="container">
-            <h2 class="section-title">Insumos y Necesidades Prioritarias</h2>
+            <h2 class="section-title">Insumos y Necesidades Permanentes</h2>
             <p class="section-subtitle">Si querés colaborar con productos físicos, podés acercar cualquiera de los siguientes elementos al refugio o puntos de acopio en la ciudad.</p>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px;">
@@ -152,6 +188,54 @@
         </div>
     </section>
 
+    <!-- MODAL: CREATE / EDIT REFUGIO GOAL (ADMIN) -->
+    <div class="modal-overlay" id="goal-edit-modal">
+        <div class="modal-container" style="max-width: 620px;">
+            <button class="modal-close-btn" onclick="closeModal('goal-edit-modal')"><i class="fas fa-times"></i></button>
+            <h2 id="goal-edit-modal-title">Crear Meta u Objetivo del Refugio</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Configurá la meta de recaudación u obra para el refugio en Gálvez.</p>
+
+            <form onsubmit="handleGoalFormSubmit(event)">
+                <input type="hidden" id="goal-edit-id">
+
+                <div class="form-group">
+                    <label class="form-label">Título del Objetivo / Meta <span style="color:red;">*</span>:</label>
+                    <input type="text" id="goal-edit-title" class="form-control" placeholder="Ej: Ampliación de Caniles, Campaña de Vacunación..." required>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Categoría:</label>
+                        <input type="text" id="goal-edit-category" class="form-control" placeholder="Ej: Obras, Salud, Alimentación">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Meta Total ($) <span style="color:red;">*</span>:</label>
+                        <input type="number" id="goal-edit-target" class="form-control" placeholder="Ej: 500000" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Recaudado Actual ($):</label>
+                        <input type="number" id="goal-edit-current" class="form-control" placeholder="Ej: 150000" value="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Imagen Descriptiva (Cloudinary con barra de progreso):</label>
+                    <input type="file" id="goal-edit-file-input" class="form-control" accept="image/*">
+                    <input type="hidden" id="goal-edit-image-url">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Descripción detallada del Objetivo <span style="color:red;">*</span>:</label>
+                    <textarea id="goal-edit-desc" class="form-control" rows="3" placeholder="Explicá en qué se utilizarán las donaciones..." required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; background: #2e7d32;">
+                    <i class="fas fa-cloud-upload-alt"></i> Guardar Meta en la Nube
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- FOOTER -->
     <footer class="main-footer">
         <div class="container">
@@ -199,6 +283,15 @@
         </div>
     </footer>
 
+    <!-- Firebase App & Auth SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin-bar.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/refugio.js"></script>
 </body>
 </html>

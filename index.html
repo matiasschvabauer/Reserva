@@ -128,6 +128,31 @@
         </div>
     </div>
 
+    <!-- BANNER: NECESIDADES Y METAS ACTUALES DE LA RESERVA -->
+    <section style="margin-top: 40px; margin-bottom: 20px;">
+        <div class="container">
+            <div style="background: linear-gradient(135deg, #1b4332, #2d6a4f); color: #fff; border-radius: var(--radius-lg); padding: 30px; box-shadow: var(--shadow-md); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
+                <div style="max-width: 650px;">
+                    <span class="badge" style="background: #e9c46a; color: #1b4332; font-weight: 800; margin-bottom: 10px; font-size: 0.82rem;">
+                        <i class="fas fa-exclamation-triangle"></i> URGENTE • NECESIDADES DEL DÍA EN GÁLVEZ
+                    </span>
+                    <h2 style="color: #fff; font-size: 1.6rem; margin-bottom: 8px;">¿Querés ayudar hoy al Refugio de la Reserva Canina?</h2>
+                    <p style="opacity: 0.92; font-size: 0.95rem; line-height: 1.5; margin: 0;">
+                        Necesitamos insumos diarios (alimento, vacunas, curaciones) y colaboración para nuestras metas de obras. Tu ayuda de hoy salva vidas.
+                    </p>
+                </div>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <a href="refugio.html#necesidades-hoy" class="btn btn-secondary" style="background: #e9c46a; color: #1b4332; font-weight: 700;">
+                        <i class="fas fa-hand-holding-heart"></i> Ver Necesidades de Hoy
+                    </a>
+                    <a href="donaciones.html" class="btn btn-outline" style="color: #fff; border-color: rgba(255,255,255,0.6);">
+                        <i class="fas fa-heart"></i> Donar / Colaborar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- FEATURED ADOPTIONS -->
     <section class="section-padding">
         <div class="container">
@@ -296,7 +321,14 @@
         </div>
     </div>
 
-    <!-- SCRIPTS -->
+    <!-- Firebase App & Auth SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin-bar.js"></script>
     <script src="js/main.js"></script>
     <script src="js/adopciones.js"></script>
 </body>

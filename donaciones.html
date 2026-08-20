@@ -128,6 +128,23 @@
                 </div>
 
             </div>
+
+            <!-- ACTIVE GOALS IN DONATIONS PAGE -->
+            <div style="margin-top: 50px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 25px;">
+                    <div>
+                        <span class="badge badge-primary" style="margin-bottom: 8px;">Objetivos Activos</span>
+                        <h2 class="section-title" style="margin-bottom: 5px;">🎯 Metas y Proyectos a Financiar</h2>
+                        <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Cada aporte va directo a estas metas transparentes del refugio.</p>
+                    </div>
+                    <div id="admin-goals-action-container"></div>
+                </div>
+
+                <div id="refugio-goals-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px;">
+                    <!-- Rendered dynamically by js/refugio.js -->
+                </div>
+            </div>
+
         </div>
     </section>
 
@@ -178,7 +195,16 @@
         </div>
     </footer>
 
+    <!-- Firebase App & Auth SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin-bar.js"></script>
     <script src="js/main.js"></script>
     <script src="js/donaciones.js"></script>
+    <script src="js/refugio.js"></script>
 </body>
 </html>

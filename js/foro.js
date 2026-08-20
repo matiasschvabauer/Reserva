@@ -76,6 +76,9 @@ function handleCloudinaryFileUpload(fileInput, mode) {
     const previewImg = document.getElementById(mode === 'edit' ? 'edit-image-preview-element' : 'image-preview-element');
 
     if (statusEl) statusEl.innerText = '⏳ Subiendo foto a Cloudinary...';
+    if (window.showUploadProgress) {
+        window.showUploadProgress('Subiendo Imagen a la Nube', `Subiendo ${file.name} a Cloudinary...`, 45);
+    }
 
     const formData = new FormData();
     formData.append('file', file);
@@ -92,6 +95,11 @@ function handleCloudinaryFileUpload(fileInput, mode) {
                 if (previewImg) previewImg.src = data.secure_url;
                 if (previewContainer) previewContainer.style.display = 'block';
 
+                if (window.showUploadProgress) {
+                    window.showUploadProgress('Carga Completada', '¡Foto procesada correctamente!', 100);
+                    setTimeout(window.hideUploadProgress, 600);
+                }
+
                 // Check if Cloudinary AI moderation (AWS Rekognition) flagged the image
                 if (data.moderation && data.moderation.length > 0) {
                     const modStatus = data.moderation[0].status;
@@ -107,10 +115,12 @@ function handleCloudinaryFileUpload(fileInput, mode) {
                 if (statusEl) statusEl.innerText = '✅ Foto subida con éxito a Cloudinary';
                 showToast('¡Foto cargada con éxito!', 'success');
             } else {
+                if (window.hideUploadProgress) window.hideUploadProgress();
                 throw new Error(data.error ? data.error.message : 'Upload failed');
             }
         })
         .catch(err => {
+            if (window.hideUploadProgress) window.hideUploadProgress();
             console.warn("Cloudinary Upload Fallback using local FileReader:", err);
             // Fallback local preview if Cloudinary credentials are not configured yet
             const reader = new FileReader();
