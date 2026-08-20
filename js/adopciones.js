@@ -110,14 +110,19 @@ function setupAdoptionsListener() {
                     images: (data.images && data.images.length > 0) ? data.images : [data.image || 'assets/img/cropped_circle_image.png']
                 });
             });
+
             if (list.length === 0) {
-                seedInitialDogs();
+                allDogsList = INITIAL_DOGS;
+                renderDogsCatalog(allDogsList);
+                if (currentUser && currentUser.isAdmin) {
+                    seedInitialDogs();
+                }
             } else {
                 allDogsList = list;
                 renderDogsCatalog(allDogsList);
             }
         }, (err) => {
-            console.warn("Error en Firestore adoptions. Usando almacenamiento local.", err);
+            console.warn("Firestore adoptions error. Usando catálogo local:", err);
             allDogsList = getLocalDogs();
             renderDogsCatalog(allDogsList);
         });

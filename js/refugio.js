@@ -66,7 +66,9 @@ function setupRefugioListeners() {
             const list = [];
             snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
             if (list.length === 0) {
-                seedInitialNeeds();
+                refugioNeedsList = INITIAL_REFUGIO_NEEDS;
+                renderRefugioNeeds(refugioNeedsList);
+                if (currentUser && currentUser.isAdmin) seedInitialNeeds();
             } else {
                 refugioNeedsList = list;
                 renderRefugioNeeds(refugioNeedsList);
@@ -82,7 +84,9 @@ function setupRefugioListeners() {
             const list = [];
             snapshot.forEach(doc => list.push({ id: doc.id, ...doc.data() }));
             if (list.length === 0) {
-                seedInitialGoals();
+                refugioGoalsList = INITIAL_REFUGIO_GOALS;
+                renderRefugioGoals(refugioGoalsList);
+                if (currentUser && currentUser.isAdmin) seedInitialGoals();
             } else {
                 refugioGoalsList = list;
                 renderRefugioGoals(refugioGoalsList);
@@ -521,6 +525,7 @@ let goalDonationsList = [
 ];
 
 function setupGoalDonationsListener() {
+    renderPageFloatingDonors();
     if (typeof firebase !== 'undefined' && isFirebaseConfigured && db) {
         db.collection('refugio_goal_donations').onSnapshot((snapshot) => {
             const list = [];
@@ -528,11 +533,14 @@ function setupGoalDonationsListener() {
             if (list.length > 0) {
                 goalDonationsList = list;
             }
+            renderPageFloatingDonors();
             const activeModalGoalId = document.getElementById('donate-modal-goal-id')?.value;
             if (activeModalGoalId) {
                 renderGoalFloatingDonors(activeModalGoalId);
             }
         });
+    } else {
+        renderPageFloatingDonors();
     }
 }
 
@@ -573,7 +581,53 @@ function openGoalDonateModal(goalId) {
 }
 window.openGoalDonateModal = openGoalDonateModal;
 
+function renderPageFloatingDonors() {
+    const pageContainer = document.getElementById('page-floating-donors-container');
+    if (!pageContainer) return;
+
+    if (goalDonationsList.length === 0) {
+        pageContainer.innerHTML = `
+            <div style="text-align: center; color: var(--text-muted); font-size: 0.9rem; z-index: 5;">
+                <i class="fas fa-hand-holding-heart" style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"></i>
+                <div>Sé el primero en colaborar con nuestras metas y dejar tu mensaje flotante de apoyo.</div>
+            </div>
+        `;
+        return;
+    }
+
+    const positions = [
+        { top: '12%', left: '4%' },
+        { top: '15%', right: '4%' },
+        { top: '55%', left: '6%' },
+        { top: '58%', right: '6%' },
+        { top: '35%', left: '28%' }
+    ];
+
+    pageContainer.innerHTML = goalDonationsList.map((d, index) => {
+        const pos = positions[index % positions.length];
+        const isAuthor = currentUser && (currentUser.uid === d.authorUid || currentUser.email === d.authorEmail);
+        const isAdmin = currentUser && currentUser.isAdmin;
+        const canDelete = isAuthor || isAdmin;
+        const delay = (index * 0.5).toFixed(1);
+
+        return `
+            <div class="floating-donor-card" style="top: ${pos.top}; ${pos.left ? `left: ${pos.left}` : `right: ${pos.right}`}; animation-delay: ${delay}s;">
+                <img src="${escapeHTML(d.authorPhoto || 'assets/img/cropped_circle_image.png')}" alt="${escapeHTML(d.author)}" class="floating-donor-avatar" onerror="this.src='assets/img/cropped_circle_image.png'">
+                <div class="floating-donor-info">
+                    <div class="floating-donor-name">
+                        ${escapeHTML(d.author || 'Vecino/a')}
+                        <span class="floating-donor-amount">+$${Number(d.amount || 0).toLocaleString('es-AR')}</span>
+                        ${canDelete ? `<i class="fas fa-trash" style="color: #c62828; cursor: pointer; margin-left: 6px; font-size: 0.75rem;" onclick="deleteGoalDonation('${d.id}', '${d.goalId}')" title="Eliminar mensaje"></i>` : ''}
+                    </div>
+                    ${d.comment ? `<div class="floating-donor-comment">"${escapeHTML(d.comment)}"</div>` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
 function renderGoalFloatingDonors(goalId) {
+    renderPageFloatingDonors();
     const container = document.getElementById('goal-floating-donors-container');
     if (!container) return;
 
