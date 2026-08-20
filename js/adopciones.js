@@ -15,11 +15,13 @@ const INITIAL_DOGS = [
         images: [
             "assets/img/Animales de la reserva real/Leopoldo1.jpg",
             "assets/img/Animales de la reserva real/Leopoldo2.jpg",
-            "assets/img/Animales de la reserva real/Leopoldo3.jpg"
+            "assets/img/Animales de la reserva real/Leopoldo3.jpg",
+            "assets/img/Animales de la reserva real/Leopoldo4.jpg",
+            "assets/img/Animales de la reserva real/Leopoldo5.jpg"
         ],
         description: "Leopoldo es un perro noble, cariñoso y de mirada extremadamente tierna. Le encanta salir a pasear y acompañar.",
         health: "Vacunado, Castrado y Desparasitado",
-        story: "Rescatado por los voluntarios en Gálvez. Demostró ser un compañero de vida ejemplar."
+        story: "Rescatado por los voluntarios en Gálvez. Tras recuperarse en la Reserva, demostró ser un compañero de vida ejemplar que sueña con una familia amorosa."
     },
     {
         id: "dog_2",
@@ -30,10 +32,12 @@ const INITIAL_DOGS = [
         size: "Mediano",
         status: "Disponible",
         image: "assets/img/Animales de la reserva real/Lupin.jpg",
-        images: ["assets/img/Animales de la reserva real/Lupin.jpg"],
+        images: [
+            "assets/img/Animales de la reserva real/Lupin.jpg"
+        ],
         description: "Lupin es súper sociable, curioso y juguetón. Se lleva excelente con otros animales.",
         health: "Vacunado, Castrado y Desparasitado",
-        story: "Encontrado buscando refugio en un barrio de Gálvez. Hoy está sano y listo para ser adoptado."
+        story: "Fue encontrado buscando refugio en un barrio de Gálvez. Hoy está sano, fuerte y ansioso por formar parte de un hogar definitivo."
     },
     {
         id: "dog_3",
@@ -44,10 +48,14 @@ const INITIAL_DOGS = [
         size: "Pequeño / Mediano",
         status: "Disponible",
         image: "assets/img/Animales de la reserva real/Pumba1.jpg",
-        images: ["assets/img/Animales de la reserva real/Pumba1.jpg"],
-        description: "Pumba es pura simpatía, ternura y buen carácter. Tranquilo en el hogar.",
+        images: [
+            "assets/img/Animales de la reserva real/Pumba1.jpg",
+            "assets/img/Animales de la reserva real/Pumba2.jpg",
+            "assets/img/Animales de la reserva real/Pumba3.jpg"
+        ],
+        description: "Pumba es pura simpatía, ternura y buen carácter. De tamaño práctico y muy dulce.",
         health: "Vacunado, Castrado, Controles al día",
-        story: "Rescatado hace un tiempo, es uno de los mimados del refugio."
+        story: "Rescatado hace un tiempo, Pumba es de los mimados del refugio por su andar compasivo y su mirada dulce."
     },
     {
         id: "dog_4",
@@ -58,10 +66,13 @@ const INITIAL_DOGS = [
         size: "Grande",
         status: "Disponible",
         image: "assets/img/Animales de la reserva real/Wilson1.jpg",
-        images: ["assets/img/Animales de la reserva real/Wilson1.jpg"],
+        images: [
+            "assets/img/Animales de la reserva real/Wilson1.jpg",
+            "assets/img/Animales de la reserva real/Wilson2.jpg"
+        ],
         description: "Wilson es un gigante bonachón, guardián leal y de temple sereno.",
         health: "Vacunado, Castrado y Desparasitado",
-        story: "Wilson fue rescatado tras pasar necesidades en la vía pública. Se recuperó maravillosamente."
+        story: "Wilson fue rescatado tras pasar necesidades en la vía pública. Se recuperó maravillosamente y busca su familia definitiva."
     }
 ];
 
@@ -81,7 +92,12 @@ function setupAdoptionsListener() {
         db.collection('adoptions').onSnapshot((snapshot) => {
             const list = [];
             snapshot.forEach(doc => {
-                list.push({ id: doc.id, ...doc.data() });
+                const data = doc.data();
+                list.push({
+                    id: doc.id,
+                    ...data,
+                    images: (data.images && data.images.length > 0) ? data.images : [data.image || 'assets/img/cropped_circle_image.png']
+                });
             });
             if (list.length === 0) {
                 seedInitialDogs();
@@ -107,7 +123,7 @@ function seedInitialDogs() {
             const ref = db.collection('adoptions').doc(dog.id);
             batch.set(ref, dog);
         });
-        batch.commit().catch(e => console.warn("Error seeding dogs:", e));
+        batch.commit().catch(e => console.warn("Seed dogs error:", e));
     }
     allDogsList = INITIAL_DOGS;
     saveLocalDogs(INITIAL_DOGS);
@@ -117,7 +133,10 @@ function seedInitialDogs() {
 function getLocalDogs() {
     const saved = localStorage.getItem('reserva_adoptions_dogs');
     if (!saved) return INITIAL_DOGS;
-    try { return JSON.parse(saved); } catch(e) { return INITIAL_DOGS; }
+    try {
+        const list = JSON.parse(saved);
+        return (list && list.length > 0) ? list : INITIAL_DOGS;
+    } catch(e) { return INITIAL_DOGS; }
 }
 
 function saveLocalDogs(dogs) {
@@ -158,13 +177,21 @@ function renderDogsCatalog(dogs) {
 
     grid.innerHTML = dogs.map(dog => {
         const isAdmin = currentUser && currentUser.isAdmin;
+        const mainImage = dog.image || (dog.images && dog.images[0]) || 'assets/img/cropped_circle_image.png';
+        const photoCount = dog.images ? dog.images.length : 1;
+
         return `
             <div class="dog-card">
                 <div class="dog-card-img-wrapper">
-                    <img src="${dog.image || 'assets/img/cropped_circle_image.png'}" alt="${escapeHTML(dog.name)}" class="dog-card-img">
+                    <img src="${mainImage}" alt="${escapeHTML(dog.name)}" class="dog-card-img">
                     <span class="badge ${dog.status === 'Urgente' ? 'badge-urgent' : 'badge-primary'} dog-status-tag">
                         ${escapeHTML(dog.status || 'Disponible')}
                     </span>
+                    ${photoCount > 1 ? `
+                        <span class="badge badge-secondary" style="position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.65); color: #fff; border: none; font-size: 0.75rem;">
+                            <i class="fas fa-camera"></i> ${photoCount} fotos
+                        </span>
+                    ` : ''}
                     ${isAdmin ? `
                         <div style="position: absolute; top: 12px; right: 12px; display: flex; gap: 6px;">
                             <button onclick="openDogEditModal('${dog.id}')" class="btn btn-sm btn-light" style="padding: 4px 8px; font-size: 0.78rem; background: rgba(255,255,255,0.9);" title="Editar">
@@ -227,12 +254,22 @@ function openDogDetailModal(id) {
     const modalBody = document.getElementById('dog-modal-content');
     if (!modalBody) return;
 
-    const imagesList = dog.images && dog.images.length > 0 ? dog.images : [dog.image];
+    const imagesList = dog.images && dog.images.length > 0 ? dog.images : [dog.image || 'assets/img/cropped_circle_image.png'];
 
     modalBody.innerHTML = `
         <div style="display: flex; flex-direction: column; gap: 20px;">
             <div>
                 <img id="modal-main-dog-img" src="${imagesList[0]}" alt="${escapeHTML(dog.name)}" style="width: 100%; height: 280px; object-fit: cover; border-radius: var(--radius-md); box-shadow: var(--shadow-sm);">
+                ${imagesList.length > 1 ? `
+                    <div style="display: flex; gap: 10px; margin-top: 12px; overflow-x: auto; padding-bottom: 5px;">
+                        ${imagesList.map((imgSrc, idx) => `
+                            <img src="${imgSrc}" alt="${escapeHTML(dog.name)} foto ${idx + 1}" 
+                                onclick="changeModalDogImage('${imgSrc}')" 
+                                class="modal-thumb-img" 
+                                style="width: 65px; height: 65px; object-fit: cover; border-radius: var(--radius-sm); cursor: pointer; border: 2px solid ${idx === 0 ? 'var(--primary)' : 'var(--border-color)'}; flex-shrink: 0;">
+                        `).join('')}
+                    </div>
+                ` : ''}
             </div>
             <div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -241,7 +278,7 @@ function openDogDetailModal(id) {
                 </div>
                 <p style="color: var(--text-muted); margin-bottom: 15px;"><strong>Tamaño:</strong> ${escapeHTML(dog.size)} | <strong>Edad:</strong> ${escapeHTML(dog.age)}</p>
                 <h4 style="margin-bottom: 6px; color: var(--primary);"><i class="fas fa-heartbeat"></i> Estado de Salud:</h4>
-                <p style="margin-bottom: 15px;">${escapeHTML(dog.health || 'Vacunado/a y desparasitado/a')}</p>
+                <p style="margin-bottom: 15px;">${escapeHTML(dog.health || 'Vacunado/a, castrado/a y desparasitado/a')}</p>
                 <h4 style="margin-bottom: 6px; color: var(--primary);"><i class="fas fa-book-open"></i> Su Historia:</h4>
                 <p style="margin-bottom: 20px; color: var(--text-muted);">${escapeHTML(dog.story || dog.description)}</p>
                 <button class="btn btn-secondary" onclick="sendAdoptionRequest('${escapeHTML(dog.name)}')" style="width: 100%;">
@@ -252,6 +289,19 @@ function openDogDetailModal(id) {
     `;
 
     openModal('dog-detail-modal');
+}
+
+function changeModalDogImage(src) {
+    const mainImg = document.getElementById('modal-main-dog-img');
+    if (mainImg) mainImg.src = src;
+
+    document.querySelectorAll('.modal-thumb-img').forEach(thumb => {
+        if (thumb.getAttribute('src') === src) {
+            thumb.style.borderColor = 'var(--primary)';
+        } else {
+            thumb.style.borderColor = 'var(--border-color)';
+        }
+    });
 }
 
 function sendAdoptionRequest(dogName) {
@@ -362,6 +412,17 @@ async function handleDogFormSubmit(event) {
         }
     }
 
+    const existingDog = allDogsList.find(d => String(d.id) === String(dogId));
+    let imagesList = (existingDog && existingDog.images) ? [...existingDog.images] : [];
+    if (imageUrl) {
+        if (!imagesList.includes(imageUrl)) {
+            imagesList.unshift(imageUrl);
+        }
+    }
+    if (imagesList.length === 0) {
+        imagesList = ['assets/img/cropped_circle_image.png'];
+    }
+
     const dogData = {
         id: dogId || "dog_" + Date.now(),
         name,
@@ -373,8 +434,8 @@ async function handleDogFormSubmit(event) {
         health,
         story,
         description,
-        image: imageUrl || 'assets/img/cropped_circle_image.png',
-        images: [imageUrl || 'assets/img/cropped_circle_image.png']
+        image: imageUrl || imagesList[0],
+        images: imagesList
     };
 
     if (typeof firebase !== 'undefined' && isFirebaseConfigured && db) {
